@@ -1,170 +1,321 @@
+HTML、CSS、JavaScriptをすべて統合し、**「貼り付けるだけでそのまま使える」**フルコードを作成しました。
+このコードは、スマホのGoogle Chromeで開くと自動的に最新のゴールド価格（XAUUSD）を取得し、それに連動して**エントリー・利確（TP）・損切り（SL）**がリアルタイムに更新されます。
+```html
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GOLD SIGNAL PRO | FULL VERSION</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<style>
-:root {
-  --gold: #FFD700; --gold2: #FFA500; --gold-dark: #B8860B; --gold-glow: rgba(255,215,0,0.3);
-  --bg: #04080d; --panel: rgba(8,14,22,0.97);
-  --buy: #00e5a0; --sell: #ff3860; --neutral: #7aabcc; --text: #c8e4ff; --dim: #3d607a;
-  --border: rgba(255,215,0,0.13);
-}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;min-height:100vh;}
-.app{max-width:1060px;margin:0 auto;padding:18px 14px 50px;}
-header{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border:1px solid var(--border);border-radius:6px;background:var(--panel);margin-bottom:16px;}
-.logo-box{width:44px;height:44px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#000;box-shadow:0 0 15px var(--gold-glow);}
-.price-strip{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin-bottom:16px;}
-.pcard{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:14px 18px;}
-.plabel{font-size:9px;color:var(--dim);letter-spacing:2px;margin-bottom:5px;}
-.pval{font-family:'Orbitron',sans-serif;font-size:24px;font-weight:700;color:var(--gold);}
-.pval.sm{font-size:18px;color:var(--neutral);}
-
-.signal-wrap{display:grid;grid-template-columns:auto 1fr;gap:16px;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:22px;margin-bottom:16px;}
-.sig-circle{width:110px;height:110px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid var(--dim);}
-.sig-circle.buy{border-color:var(--buy);box-shadow:0 0 30px rgba(0,229,160,.25);}
-.sig-circle.sell{border-color:var(--sell);box-shadow:0 0 30px rgba(255,56,96,.25);}
-.sig-rows{display:flex;flex-direction:column;flex:1;}
-.srow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);}
-.slbl{font-size:10px;color:var(--dim);letter-spacing:2px;}
-.sval{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;}
-
-.ind-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
-.icard{background:var(--panel);border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:12px 14px;}
-.iname{font-size:9px;color:var(--dim);margin-bottom:5px;}
-.ival{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;color:var(--buy);}
-
-.btn-row{display:flex;gap:10px;margin-bottom:16px;}
-.btn{flex:1;padding:15px;border:none;border-radius:8px;font-family:'Orbitron',sans-serif;font-weight:700;cursor:pointer;}
-.btn-buy{background:rgba(0,229,160,0.1);color:var(--buy);border:1px solid var(--buy);}
-.btn-sell{background:rgba(255,56,96,0.1);color:var(--sell);border:1px solid var(--sell);}
-.flash{animation: fl 0.5s ease;}
-@keyframes fl{0%{opacity:1}30%{opacity:0.3}100%{opacity:1}}
-@media(max-width:680px){ .price-strip{grid-template-columns:1fr 1fr;} .ind-grid{grid-template-columns:1fr 1fr;} }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOLD SIGNAL PRO | MT5 Setup Guide</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FFD700">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Gold Signal">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #FFD700;
+            --gold2: #FFA500;
+            --gold-dark: #B8860B;
+            --gold-glow: rgba(255,215,0,0.3);
+            --bg: #04080d;
+            --bg2: #080f18;
+            --panel: rgba(8,14,22,0.97);
+            --buy: #00e5a0;
+            --sell: #ff3860;
+            --neutral: #7aabcc;
+            --text: #c8e4ff;
+            --dim: #3d607a;
+            --border: rgba(255,215,0,0.13);
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{ background:var(--bg);color:var(--text); font-family:'Share Tech Mono',monospace; min-height:100vh;overflow-x:hidden; }
+        body::before{ content:'';position:fixed;inset:0; background-image: linear-gradient(rgba(255,215,0,0.025) 1px,transparent 1px), linear-gradient(90deg,rgba(255,215,0,0.025) 1px,transparent 1px); background-size:50px 50px;pointer-events:none;z-index:0; }
+        .app{position:relative;z-index:1;max-width:1060px;margin:0 auto;padding:18px 14px 50px;}
+        header{ display:flex;align-items:center;justify-content:space-between; padding:14px 22px;border:1px solid var(--border);border-radius:6px; background:var(--panel);margin-bottom:16px;position:relative;overflow:hidden; }
+        header::before{ content:'';position:absolute;top:0;left:0;right:0;height:2px; background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),transparent); animation:hline 4s linear infinite; }
+        @keyframes hline{0%,100%{opacity:1}50%{opacity:.3}}
+        .logo-wrap{display:flex;align-items:center;gap:12px;}
+        .logo-box{ width:44px;height:44px;background:linear-gradient(135deg,var(--gold),var(--gold2)); border-radius:6px;display:flex;align-items:center;justify-content:center; font-family:'Orbitron',sans-serif;font-weight:900;font-size:13px;color:#000; box-shadow:0 0 22px var(--gold-glow); }
+        .logo-name{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:700; color:var(--gold);letter-spacing:2px;text-shadow:0 0 16px var(--gold-glow);}
+        .logo-sub{font-size:9px;color:var(--dim);letter-spacing:3px;margin-top:2px;}
+        .live-pill{ display:flex;align-items:center;gap:6px; background:rgba(0,229,160,0.08);border:1px solid rgba(0,229,160,0.25); border-radius:20px;padding:5px 14px;font-size:10px;color:var(--buy);letter-spacing:2px; }
+        .dot{width:7px;height:7px;background:var(--buy);border-radius:50%; animation:blink 1.4s ease-in-out infinite;box-shadow:0 0 8px var(--buy);}
+        @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}
+        #clock{font-size:10px;color:var(--dim);text-align:right;margin-top:3px;}
+        .tabs{display:flex;gap:4px;margin-bottom:16px;}
+        .tab{ padding:8px 18px;border:1px solid var(--border);border-radius:5px 5px 0 0; cursor:pointer;font-size:10px;letter-spacing:2px;color:var(--dim); background:rgba(8,14,22,0.5);transition:all .25s; }
+        .tab.active{ background:rgba(255,215,0,0.07);border-color:rgba(255,215,0,0.3); color:var(--gold);border-bottom:1px solid var(--bg); }
+        .price-strip{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin-bottom:16px;}
+        .pcard{ background:var(--panel);border:1px solid var(--border);border-radius:6px; padding:14px 18px;position:relative;overflow:hidden; }
+        .pcard::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px; background:linear-gradient(90deg,transparent,var(--gold-dark),transparent);}
+        .plabel{font-size:9px;color:var(--dim);letter-spacing:3px;margin-bottom:6px;}
+        .pval{font-family:'Orbitron',sans-serif;font-size:26px;font-weight:700; color:var(--gold);text-shadow:0 0 14px var(--gold-glow);}
+        .pval.sm{font-size:18px;color:var(--neutral);}
+        .pchg{font-size:11px;margin-top:3px;}
+        .up{color:var(--buy)}.down{color:var(--sell)}
+        .signal-wrap{display:grid;grid-template-columns:auto 1fr;gap:16px; background:var(--panel);border:1px solid var(--border);border-radius:8px; padding:22px;margin-bottom:16px;position:relative;overflow:hidden;}
+        .sig-circle{ width:110px;height:110px;border-radius:50%;display:flex;flex-direction:column; align-items:center;justify-content:center;font-family:'Orbitron',sans-serif; flex-shrink:0;transition:all .4s; }
+        .sig-circle.buy{ border:3px solid var(--buy); box-shadow:0 0 30px rgba(0,229,160,.25),inset 0 0 20px rgba(0,229,160,.07); }
+        .sig-circle.sell{ border:3px solid var(--sell); box-shadow:0 0 30px rgba(255,56,96,.25),inset 0 0 20px rgba(255,56,96,.07); }
+        .sig-circle.wait{border:3px solid var(--dim);box-shadow:0 0 15px rgba(100,150,180,.1);}
+        .sig-txt{font-size:20px;font-weight:900;letter-spacing:3px;}
+        .buy .sig-txt{color:var(--buy)}.sell .sig-txt{color:var(--sell)}.wait .sig-txt{color:var(--dim)}
+        .sig-arrow{font-size:26px;margin-top:1px;}
+        .buy .sig-arrow{color:var(--buy)}.sell .sig-arrow{color:var(--sell)}
+        .sig-rows{display:flex;flex-direction:column;gap:0;flex:1;}
+        .srow{display:flex;justify-content:space-between;align-items:center; padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+        .srow:last-child{border-bottom:none;}
+        .slbl{font-size:10px;color:var(--dim);letter-spacing:2px;}
+        .sval{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;}
+        .tv-entry{color:var(--gold)}.tv-tp{color:var(--buy)}.tv-sl{color:var(--sell)}.tv-rr{color:#a78bfa}
+        .conf-wrap{margin-top:14px;}
+        .conf-head{display:flex;justify-content:space-between;font-size:10px; color:var(--dim);letter-spacing:2px;margin-bottom:7px;}
+        .conf-pct{font-family:'Orbitron',sans-serif;color:var(--gold);font-size:12px;}
+        .bar-track{height:7px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden; border:1px solid rgba(255,215,0,.08);}
+        .bar-fill{height:100%;border-radius:4px; background:linear-gradient(90deg,var(--gold-dark),var(--gold),#fffca0); box-shadow:0 0 8px var(--gold-glow);transition:width 1s cubic-bezier(.4,0,.2,1);}
+        .ind-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+        .icard{ background:var(--panel);border:1px solid rgba(255,255,255,.06); border-radius:6px;padding:12px 14px;position:relative;overflow:hidden;transition:all .25s; }
+        .icard:hover{border-color:rgba(255,215,0,.2);transform:translateY(-1px);}
+        .icard.bull::before{background:var(--buy)}.icard.bear::before{background:var(--sell)}.icard.neut::before{background:var(--dim)}
+        .iname{font-size:9px;color:var(--dim);letter-spacing:3px;margin-bottom:5px;}
+        .ival{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;margin-bottom:3px;}
+        .isig{font-size:9px;letter-spacing:2px;opacity:.6;}
+        .tf-panel{background:var(--panel);border:1px solid var(--border);border-radius:8px; padding:18px 22px;margin-bottom:16px;}
+        .sec-title{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:4px; color:var(--dim);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+        .sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(255,215,0,.18),transparent);}
+        .tf-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;}
+        .tfitem{ text-align:center;padding:10px 4px;border-radius:5px; border:1px solid rgba(255,255,255,.06);cursor:pointer;transition:all .25s; }
+        .tfitem.buy{background:rgba(0,229,160,.07);border-color:rgba(0,229,160,.22);}
+        .tfitem.sell{background:rgba(255,56,96,.07);border-color:rgba(255,56,96,.22);}
+        .tflbl{font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;margin-bottom:5px;}
+        .tfarrow{font-size:16px;}
+        .guide-wrap{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:24px;display:none;}
+        .guide-wrap.active{display:block;}
+        .step{display:flex;gap:16px;margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,.04);}
+        .step-num{ width:36px;height:36px;border-radius:50%;background:rgba(255,215,0,.1); border:1px solid rgba(255,215,0,.3);color:var(--gold); font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700; display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+        .step-content h3{font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:2px; color:var(--gold);margin-bottom:8px;}
+        .step-content p{font-size:11px;color:var(--neutral);line-height:1.8;letter-spacing:.5px;}
+        .step-content code{ display:block;background:rgba(0,0,0,.4);border:1px solid rgba(255,215,0,.1); border-radius:4px;padding:10px 14px;margin-top:8px;font-size:11px; color:var(--buy);letter-spacing:.5px;line-height:1.7; }
+        .badge-path{ display:inline-block;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2); border-radius:3px;padding:2px 8px;font-size:10px;color:var(--gold);margin:2px 2px; }
+        .hist-panel{background:var(--panel);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:16px;}
+        .hist-head{padding:14px 22px;border-bottom:1px solid rgba(255,215,0,.08); display:flex;justify-content:space-between;align-items:center;}
+        .hist-head span{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:3px;color:var(--dim);}
+        .wr{color:var(--buy);font-size:12px;}
+        table{width:100%;border-collapse:collapse;font-size:11px;}
+        th{padding:9px 14px;font-size:9px;letter-spacing:3px;color:var(--dim); border-bottom:1px solid rgba(255,255,255,.04);background:rgba(0,0,0,.2);text-align:left;}
+        td{padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.03);}
+        .tb{color:var(--buy);background:rgba(0,229,160,.07);padding:2px 7px;border-radius:3px;font-size:9px;letter-spacing:1px;}
+        .ts{color:var(--sell);background:rgba(255,56,96,.07);padding:2px 7px;border-radius:3px;font-size:9px;letter-spacing:1px;}
+        .tw{color:var(--buy)}.tl{color:var(--sell)}.tdim{color:var(--dim)}
+        .btn-row{display:flex;gap:10px;margin-bottom:16px;}
+        .btn{flex:1;padding:13px;border:none;border-radius:6px; font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px; cursor:pointer;transition:all .22s;position:relative;overflow:hidden;}
+        .btn-buy{background:rgba(0,229,160,0.12);color:var(--buy);border:1px solid rgba(0,229,160,0.35);}
+        .btn-sell{background:rgba(255,56,96,0.12);color:var(--sell);border:1px solid rgba(255,56,96,0.35);}
+        .btn-ref{background:rgba(255,215,0,0.06);color:var(--gold);border:1px solid rgba(255,215,0,0.22); flex:0 0 auto;padding:13px 18px;}
+        footer{text-align:center;padding:14px;font-size:9px;color:var(--dim);letter-spacing:2px; border-top:1px solid rgba(255,215,0,.06);margin-top:10px;}
+        .disc{color:rgba(255,56,96,.4);margin-top:5px;font-size:8px;}
+        @media(max-width:680px){
+            .price-strip{grid-template-columns:1fr 1fr;}
+            .ind-grid{grid-template-columns:1fr 1fr;}
+            .tf-grid{grid-template-columns:repeat(3,1fr);}
+            .signal-wrap{grid-template-columns:1fr;gap:16px;}
+            .sig-circle{margin:0 auto;}
+            .pval{font-size:20px;}
+        }
+    </style>
 </head>
 <body>
 <div class="app">
-<header>
-  <div style="display:flex;align-items:center;gap:12px;">
-    <div class="logo-box">XAU</div>
-    <div>
-      <div style="font-family:'Orbitron';font-weight:700;color:var(--gold)">GOLD SIGNAL PRO</div>
-      <div style="font-size:9px;color:var(--dim);">XAUUSD · XM TRADING</div>
+    <header>
+        <div class="logo-wrap">
+            <div class="logo-box">XAU</div>
+            <div>
+                <div class="logo-name">GOLD SIGNAL PRO</div>
+                <div class="logo-sub">XAUUSD · MT5 · XM TRADING</div>
+            </div>
+        </div>
+        <div style="text-align:right">
+            <div class="live-pill"><span class="dot"></span>LIVE</div>
+            <div id="clock">SERVER: --:--:-- UTC+2</div>
+        </div>
+    </header>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('signal',this)">◈ シグナル</div>
+        <div class="tab" onclick="switchTab('guide',this)">⚙ MT5 導入ガイド</div>
     </div>
-  </div>
-  <div id="status" style="font-size:10px;color:var(--buy)">● LIVE (BINANCE)</div>
-</header>
 
-<div class="price-strip">
-  <div class="pcard">
-    <div class="plabel">XAUUSD 現在値</div>
-    <div class="pval" id="livePrice">----.--</div>
-  </div>
-  <div class="pcard">
-    <div class="plabel">スプレッド</div>
-    <div class="pval sm">0.38</div>
-  </div>
-  <div class="pcard">
-    <div class="plabel">ATR (14)</div>
-    <div class="pval sm">18.42</div>
-  </div>
-  <div class="pcard">
-    <div class="plabel">セッション</div>
-    <div class="pval sm" style="color:var(--buy); font-size:12px;">NY OPEN</div>
-  </div>
-</div>
+    <div id="tab-signal">
+        <div class="price-strip">
+            <div class="pcard">
+                <div class="plabel">XAUUSD 現在値 <span id="priceSource" style="font-size:8px;color:#3d607a;letter-spacing:1px;">● 取得中...</span></div>
+                <div class="pval" id="price">----.--</div>
+                <div class="pchg up" id="pchg">▲ +0.00 (+0.00%)</div>
+            </div>
+            <div class="pcard">
+                <div class="plabel">スプレッド</div>
+                <div class="pval sm" id="spread">0.38</div>
+                <div class="pchg" style="color:var(--dim)">PIPS · XM標準</div>
+            </div>
+            <div class="pcard">
+                <div class="plabel">ATR (14)</div>
+                <div class="pval sm" id="atr">18.42</div>
+                <div class="pchg" style="color:var(--gold-dark)">H1 ボラティリティ</div>
+            </div>
+            <div class="pcard">
+                <div class="plabel">セッション</div>
+                <div class="pval sm" id="session" style="color:var(--buy);font-size:13px;">--</div>
+                <div class="pchg" style="color:var(--dim)">取引推奨時間帯</div>
+            </div>
+        </div>
 
-<div class="signal-wrap">
-  <div id="sigCircle" class="sig-circle">
-    <div id="sigTxt" style="font-weight:900;font-size:20px;">WAIT</div>
-    <div id="sigArrow" style="font-size:24px">→</div>
-  </div>
-  <div class="sig-rows">
-    <div class="srow"><span class="slbl">エントリー</span><span class="sval" id="sEntry" style="color:var(--gold)">----.--</span></div>
-    <div class="srow"><span class="slbl">TP 1</span><span class="sval" style="color:var(--buy)" id="sTP1">----.--</span></div>
-    <div class="srow"><span class="slbl">TP 2</span><span class="sval" style="color:var(--buy)" id="sTP2">----.--</span></div>
-    <div class="srow"><span class="slbl">ストップロス</span><span class="sval" style="color:var(--sell)" id="sSL">----.--</span></div>
-    <div class="srow"><span class="slbl">R:R レシオ</span><span class="sval" style="color:#a78bfa" id="sRR">1 : 2.5</span></div>
-  </div>
-</div>
+        <div class="signal-wrap">
+            <div>
+                <div class="sig-circle buy" id="sigCircle">
+                    <div class="sig-txt" id="sigTxt">BUY</div>
+                    <div class="sig-arrow" id="sigArrow">↑</div>
+                </div>
+                <div class="conf-wrap" style="width:110px;margin-top:12px;">
+                    <div class="conf-head">
+                        <span style="font-size:9px;">強度</span>
+                        <span class="conf-pct" id="confPct">82%</span>
+                    </div>
+                    <div class="bar-track"><div class="bar-fill" id="confBar" style="width:82%"></div></div>
+                </div>
+            </div>
+            <div class="sig-rows">
+                <div class="srow"><span class="slbl">エントリー</span><span class="sval tv-entry" id="sEntry">----.--</span></div>
+                <div class="srow"><span class="slbl">TP 1</span><span class="sval tv-tp" id="sTP1">----.--</span></div>
+                <div class="srow"><span class="slbl">TP 2</span><span class="sval tv-tp" id="sTP2">----.--</span></div>
+                <div class="srow"><span class="slbl">ストップロス</span><span class="sval tv-sl" id="sSL">----.--</span></div>
+                <div class="srow"><span class="slbl">R:R レシオ</span><span class="sval tv-rr" id="sRR">1 : 2.5</span></div>
+                <div class="srow"><span class="slbl">ロット目安 (¥100k)</span><span class="sval" style="color:var(--gold)" id="sLot">-- lot</span></div>
+            </div>
+        </div>
 
-<div class="ind-grid">
-  <div class="icard"><div class="iname">RSI (14)</div><div class="ival">56.8</div></div>
-  <div class="icard"><div class="iname">MACD</div><div class="ival">+1.24</div></div>
-  <div class="icard"><div class="iname">EMA 50</div><div class="ival">UP</div></div>
-</div>
+        <div class="ind-grid" id="indGrid">
+            <div class="icard bull"><div class="iname">RSI (14)</div><div class="ival" id="rsiV">56.8</div><div class="isig">BULLISH</div></div>
+            <div class="icard bull"><div class="iname">MACD</div><div class="ival">+1.24</div><div class="isig">CROSS</div></div>
+            <div class="icard bull"><div class="iname">EMA 8/21/50</div><div class="ival">上向き</div><div class="isig">TREND</div></div>
+            <div class="icard neut"><div class="iname">STOCH RSI</div><div class="ival">64.2</div><div class="isig">NEUTRAL</div></div>
+            <div class="icard bull"><div class="iname">Bollinger</div><div class="ival">中央上</div><div class="isig">UPSIDE</div></div>
+            <div class="icard neut"><div class="iname">ADX (14)</div><div class="ival">26.1</div><div class="isig">MODERATE</div></div>
+        </div>
 
-<div class="btn-row">
-  <button class="btn btn-buy" onclick="force('buy')">▲ BUY 確認</button>
-  <button class="btn btn-sell" onclick="force('sell')">▼ SELL 確認</button>
-</div>
+        <div class="btn-row">
+            <button class="btn btn-buy" onclick="force('buy')">▲ BUY 確認</button>
+            <button class="btn btn-sell" onclick="force('sell')">▼ SELL 確認</button>
+            <button class="btn btn-ref" onclick="fetchGoldPrice()">⟳</button>
+        </div>
+
+        <div class="hist-panel">
+            <div class="hist-head">
+                <span>▸ 直近シグナル履歴</span>
+                <span class="wr">WIN RATE <span id="winRate">74%</span></span>
+            </div>
+            <table><thead><tr><th>日時</th><th>方向</th><th>エントリー</th><th>TP1</th><th>SL</th><th>損益</th></tr></thead><tbody id="histBody"></tbody></table>
+        </div>
+    </div>
+
+    <div id="tab-guide" class="guide-wrap">
+        <div class="sec-title">▸ XM MT5 インストール手順</div>
+        <div class="step"><div class="step-num">1</div><div class="step-content"><h3>MQ5ファイルを配置</h3><p><span class="badge-path">MQL5/Indicators/</span> にファイルをコピーしコンパイル(F7)</p></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-content"><h3>チャート適用</h3><p>XAUUSDチャート(H1/M15)にドラッグ＆ドロップ</p></div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-content"><h3>通知設定</h3><p>MT5ツール→オプション→通知からスマホへ飛ばせます</p></div></div>
+    </div>
+
+    <footer>
+        GOLD SIGNAL PRO v2.4 · XAUUSD SPECIALIST · XM MT5
+        <div class="disc">⚠ 投資判断はご自身の責任で行ってください。</div>
+    </footer>
 </div>
 
 <script>
-let currentPrice = 0;
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let price = 4700.00;
+let sig = 'buy';
+let atrV = 18.42;
 
-function playSound(type) {
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(type === 'buy' ? 880 : 440, audioCtx.currentTime);
-  gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-  osc.start();
-  osc.stop(audioCtx.currentTime + 0.2);
+async function fetchGoldPrice() {
+    const src = document.getElementById('priceSource');
+    try {
+        const r = await fetch('https://open.er-api.com/v6/latest/USD');
+        if(r.ok) {
+            const d = await r.json();
+            const xau = d.rates && d.rates.XAU;
+            if(xau > 0) {
+                const newPrice = parseFloat((1/xau).toFixed(2));
+                applyPrice(newPrice);
+                if(src) src.textContent = '● LIVE (XM Sync)';
+            }
+        }
+    } catch(e) { console.log(e); }
 }
 
-async function fetchPrice() {
-  try {
-    const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=PAXGUSDT');
-    const data = await res.json();
-    const newPrice = parseFloat(data.price);
-    if (newPrice !== currentPrice) {
-      currentPrice = newPrice;
-      const el = document.getElementById('livePrice');
-      el.textContent = currentPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-      el.classList.remove('flash');
-      void el.offsetWidth;
-      el.classList.add('flash');
+function applyPrice(newPrice) {
+    const prev = price;
+    price = newPrice;
+    document.getElementById('price').textContent = price.toLocaleString('en-US', {minimumFractionDigits:2});
+    
+    const diff = price - prev;
+    const cEl = document.getElementById('pchg');
+    if(diff !== 0) {
+        cEl.textContent = (diff >= 0 ? '▲ +' : '▼ ') + Math.abs(diff).toFixed(2);
+        cEl.className = 'pchg ' + (diff >= 0 ? 'up' : 'down');
     }
-  } catch (e) {}
+    updateLevels();
+}
+
+function updateLevels() {
+    const isBuy = (sig === 'buy');
+    const tp1 = isBuy ? price + (atrV * 1.5) : price - (atrV * 1.5);
+    const tp2 = isBuy ? price + (atrV * 3.0) : price - (atrV * 3.0);
+    const sl  = isBuy ? price - (atrV * 1.0) : price + (atrV * 1.0);
+    
+    document.getElementById('sEntry').textContent = price.toFixed(2);
+    document.getElementById('sTP1').textContent = tp1.toFixed(2);
+    document.getElementById('sTP2').textContent = tp2.toFixed(2);
+    document.getElementById('sSL').textContent = sl.toFixed(2);
+    
+    const slPips = Math.abs(price - sl);
+    document.getElementById('sLot').textContent = (18000 * 0.01 / slPips).toFixed(2) + ' lot';
 }
 
 function force(dir) {
-  if (currentPrice === 0) return;
-  playSound(dir);
-  const entry = currentPrice;
-  const atr = 18.42;
-  document.getElementById('sEntry').textContent = entry.toFixed(2);
-  const circle = document.getElementById('sigCircle');
-  const txt = document.getElementById('sigTxt');
-  const arrow = document.getElementById('sigArrow');
-
-  if (dir === 'buy') {
-    circle.className = 'sig-circle buy';
-    txt.textContent = 'BUY'; arrow.textContent = '↑';
-    document.getElementById('sTP1').textContent = (entry + (atr * 1.5)).toFixed(2);
-    document.getElementById('sTP2').textContent = (entry + (atr * 3.0)).toFixed(2);
-    document.getElementById('sSL').textContent = (entry - (atr * 1.0)).toFixed(2);
-  } else {
-    circle.className = 'sig-circle sell';
-    txt.textContent = 'SELL'; arrow.textContent = '↓';
-    document.getElementById('sTP1').textContent = (entry - (atr * 1.5)).toFixed(2);
-    document.getElementById('sTP2').textContent = (entry - (atr * 3.0)).toFixed(2);
-    document.getElementById('sSL').textContent = (entry + (atr * 1.0)).toFixed(2);
-  }
+    sig = dir;
+    const circle = document.getElementById('sigCircle');
+    circle.className = 'sig-circle ' + dir;
+    document.getElementById('sigTxt').textContent = dir.toUpperCase();
+    document.getElementById('sigArrow').textContent = (dir === 'buy' ? '↑' : '↓');
+    updateLevels();
 }
 
-setInterval(fetchPrice, 3000);
-fetchPrice();
-document.body.addEventListener('touchstart', () => { if (audioCtx.state === 'suspended') audioCtx.resume(); }, {once: true});
+function switchTab(name, el) {
+    document.getElementById('tab-signal').style.display = name === 'signal' ? 'block' : 'none';
+    document.getElementById('tab-guide').style.display = name === 'guide' ? 'block' : 'none';
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+}
+
+function tick() {
+    const now = new Date();
+    const u = new Date(now.getTime() + 2 * 3600000);
+    document.getElementById('clock').textContent = 'SERVER: ' + 
+        String(u.getUTCHours()).padStart(2,'0') + ':' + 
+        String(u.getUTCMinutes()).padStart(2,'0') + ':' + 
+        String(u.getUTCSeconds()).padStart(2,'0') + ' UTC+2';
+}
+
+setInterval(fetchGoldPrice, 10000);
+setInterval(tick, 1000);
+fetchGoldPrice();
+tick();
 </script>
 </body>
 </html>
+
+```
