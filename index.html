@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GOLD SIGNAL PRO | MT5 Setup Guide</title>
-<!-- PWA -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#FFD700">
 <meta name="mobile-web-app-capable" content="yes">
@@ -156,5 +155,112 @@ header::before{
 .icard.bull .isig{color:var(--buy)}.icard.bear .isig{color:var(--sell)}.icard.neut .isig{color:var(--neutral)}
 
 /* TF MATRIX */
-.tf-panel{background:var(--panel);border:1px solid var(--border);border-radius:8px;
-  
+.tf-panel{
+  background:var(--panel);border:1px solid var(--border);border-radius:8px;
+  padding:20px;
+}
+</style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="logo-wrap">
+        <div class="logo-box">GSP</div>
+        <div>
+          <div class="logo-name">GOLD SIGNAL PRO</div>
+          <div class="logo-sub">MT5 INSTITUTIONAL ALGO</div>
+        </div>
+      </div>
+      <div>
+        <div class="live-pill"><div class="dot"></div>LIVE DATA</div>
+        <div id="clock">SCANNING...</div>
+      </div>
+    </header>
+
+    <div class="tabs">
+      <div class="tab active">XAUUSD / GOLD</div>
+      <div class="tab">DASHBOARD</div>
+      <div class="tab">SETTINGS</div>
+    </div>
+
+    <div class="price-strip">
+      <div class="pcard">
+        <div class="plabel">LIVE PRICE</div>
+        <div class="pval" id="curPrice">2042.45</div>
+        <div class="pchg up">▲ +12.30 (0.61%)</div>
+      </div>
+      <div class="pcard">
+        <div class="plabel">24H HIGH</div>
+        <div class="pval sm">2048.12</div>
+      </div>
+      <div class="pcard">
+        <div class="plabel">24H LOW</div>
+        <div class="pval sm">2021.55</div>
+      </div>
+      <div class="pcard">
+        <div class="plabel">VOLATILITY</div>
+        <div class="pval sm">14.2 ATR</div>
+      </div>
+    </div>
+
+    <div class="signal-wrap">
+      <div class="sig-circle buy">
+        <div class="sig-txt">BUY</div>
+        <div class="sig-arrow">▲</div>
+      </div>
+      <div class="sig-rows">
+        <div class="srow"><span class="slbl">ENTRY ZONE</span><span class="sval tv-entry">2040.00 - 2042.00</span></div>
+        <div class="srow"><span class="slbl">TAKE PROFIT</span><span class="sval tv-tp">2055.40</span></div>
+        <div class="srow"><span class="slbl">STOP LOSS</span><span class="sval tv-sl">2034.20</span></div>
+        <div class="srow"><span class="slbl">RISK/REWARD</span><span class="sval tv-rr">1:2.4</span></div>
+      </div>
+    </div>
+
+    <div class="conf-wrap">
+      <div class="conf-head">
+        <span>SIGNAL CONFIDENCE</span>
+        <span class="conf-pct">88%</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 88%;"></div>
+      </div>
+    </div>
+
+    <div class="ind-grid" style="margin-top:20px;">
+      <div class="icard bull">
+        <div class="iname">RSI (14)</div>
+        <div class="ival">62.4</div>
+        <div class="isig">BULLISH</div>
+      </div>
+      <div class="icard bull">
+        <div class="iname">MACD</div>
+        <div class="ival">+1.24</div>
+        <div class="isig">CROSSOVER</div>
+      </div>
+      <div class="icard neut">
+        <div class="iname">MA (200)</div>
+        <div class="ival">2015.0</div>
+        <div class="isig">ABOVE</div>
+      </div>
+    </div>
+
+    <div class="tf-panel">
+      <div class="plabel">TIME FRAME ANALYSIS</div>
+      <div style="font-size: 12px; margin-top:10px; color: var(--dim);">
+        M15: BULLISH | H1: BULLISH | H4: NEUTRAL | D1: BULLISH
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clock').textContent = now.toUTCString();
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+</body>
+</html>
+
+```
