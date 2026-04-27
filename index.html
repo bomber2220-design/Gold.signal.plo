@@ -3,112 +3,158 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GOLD SIGNAL PRO FIXED</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-
+<title>GOLD SIGNAL PRO | MT5 Setup Guide</title>
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#FFD700">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gold Signal">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
+:root {
+  --gold: #FFD700; --gold2: #FFA500; --gold-dark: #B8860B;
+  --gold-glow: rgba(255,215,0,0.3);
+  --bg: #04080d; --bg2: #080f18; --panel: rgba(8,14,22,0.97);
+  --buy: #00e5a0; --sell: #ff3860; --neutral: #7aabcc;
+  --text: #c8e4ff; --dim: #3d607a;
+  --border: rgba(255,215,0,0.13);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
 body{
-  background:#04080d;color:#c8e4ff;
+  background:var(--bg);color:var(--text);
   font-family:'Share Tech Mono',monospace;
-  padding:10px;
+  min-height:100vh;overflow-x:hidden;
 }
-.gold{color:#FFD700;font-size:28px;font-weight:700}
-.small{color:#7aabcc;font-size:11px}
-.box{border:1px solid #222;padding:12px;margin-bottom:10px;border-radius:8px}
-.buy{color:#00e5a0}
-.sell{color:#ff3860}
-</style>
-</head>
-
-<body>
-
-<div class="box">
-  <div class="small">XAUUSD REAL PRICE</div>
-  <div class="gold" id="price">---</div>
-  <div class="small" id="priceSource">loading...</div>
-</div>
-
-<div class="box">
-  ENTRY: <span id="entry">---</span><br>
-  TP1: <span id="tp1">---</span><br>
-  TP2: <span id="tp2">---</span><br>
-  SL: <span id="sl">---</span>
-</div>
-
-<script>
-
-let price = 0;
-let sig = "buy";
-
-/* =========================
-   ★ PRICE統一処理（核心）
-========================= */
-function applyPrice(p){
-  price = p;
-
-  document.getElementById("price").textContent =
-    price.toLocaleString('en-US',{minimumFractionDigits:2});
-
-  document.getElementById("priceSource").textContent = "LIVE";
-
-  updateCalc();
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(255,215,0,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,215,0,0.025) 1px,transparent 1px);
+  background-size:50px 50px;pointer-events:none;z-index:0;
 }
+.app{position:relative;z-index:1;max-width:1060px;margin:0 auto;padding:18px 14px 50px;}
 
-/* =========================
-   ★ TP/SL計算（変更なしロジック）
-========================= */
-function updateCalc(){
+/* HEADER */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 22px;border:1px solid var(--border);border-radius:6px;
+  background:var(--panel);margin-bottom:16px;position:relative;overflow:hidden;
+}
+header::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),transparent);
+  animation:hline 4s linear infinite;
+}
+@keyframes hline{0%,100%{opacity:1}50%{opacity:.3}}
+.logo-wrap{display:flex;align-items:center;gap:12px;}
+.logo-box{
+  width:44px;height:44px;background:linear-gradient(135deg,var(--gold),var(--gold2));
+  border-radius:6px;display:flex;align-items:center;justify-content:center;
+  font-family:'Orbitron',sans-serif;font-weight:900;font-size:13px;color:#000;
+  box-shadow:0 0 22px var(--gold-glow);
+}
+.logo-name{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:700;
+  color:var(--gold);letter-spacing:2px;text-shadow:0 0 16px var(--gold-glow);}
+.logo-sub{font-size:9px;color:var(--dim);letter-spacing:3px;margin-top:2px;}
+.live-pill{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(0,229,160,0.08);border:1px solid rgba(0,229,160,0.25);
+  border-radius:20px;padding:5px 14px;font-size:10px;color:var(--buy);letter-spacing:2px;
+}
+.dot{width:7px;height:7px;background:var(--buy);border-radius:50%;
+  animation:blink 1.4s ease-in-out infinite;box-shadow:0 0 8px var(--buy);}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}
+#clock{font-size:10px;color:var(--dim);text-align:right;margin-top:3px;}
 
-  const atr = 18;
-  const isBuy = sig === "buy";
-
-  const tp1 = isBuy ? price + atr*1.5 : price - atr*1.5;
-  const tp2 = isBuy ? price + atr*3.0 : price - atr*3.0;
-  const sl  = isBuy ? price - atr*1.0 : price + atr*1.0;
-
-  document.getElementById("entry").textContent = price.toFixed(2);
-  document.getElementById("tp1").textContent = tp1.toFixed(2);
-  document.getElementById("tp2").textContent = tp2.toFixed(2);
-  document.getElementById("sl").textContent = sl.toFixed(2);
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:16px;}
+.tab{
+  padding:8px 18px;border:1px solid var(--border);border-radius:5px 5px 0 0;
+  cursor:pointer;font-size:10px;letter-spacing:2px;color:var(--dim);
+  background:rgba(8,14,22,0.5);transition:all .25s;
+}
+.tab.active{
+  background:rgba(255,215,0,0.07);border-color:rgba(255,215,0,0.3);
+  color:var(--gold);border-bottom:1px solid var(--bg);
 }
 
-/* =========================
-   ★ リアル価格取得（唯一の正解）
-========================= */
-async function fetchGoldPrice(){
-
-  try{
-    const r = await fetch("https://api.metals.live/v1/spot/gold");
-    const d = await r.json();
-
-    const raw = Array.isArray(d) ? d[0].gold : d.gold;
-
-    if(raw){
-      applyPrice(parseFloat(raw.toFixed(2)));
-    }
-
-  }catch(e){
-    document.getElementById("priceSource").textContent = "ERROR";
-  }
+/* PRICE STRIP */
+.price-strip{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin-bottom:16px;}
+.pcard{
+  background:var(--panel);border:1px solid var(--border);border-radius:6px;
+  padding:14px 18px;position:relative;overflow:hidden;
 }
+.pcard::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold-dark),transparent);}
+.plabel{font-size:9px;color:var(--dim);letter-spacing:3px;margin-bottom:6px;}
+.pval{font-family:'Orbitron',sans-serif;font-size:26px;font-weight:700;
+  color:var(--gold);text-shadow:0 0 14px var(--gold-glow);}
+.pval.sm{font-size:18px;color:var(--neutral);}
+.pchg{font-size:11px;margin-top:3px;}
+.up{color:var(--buy)}.down{color:var(--sell)}
 
-/* =========================
-   ★ refresh完全無効化（重要）
-   ※ここがズレ原因だった部分
-========================= */
-function refresh(){
-  // 何もしない（価格を絶対触らない）
-  updateCalc();
+/* SIGNAL BLOCK */
+.signal-wrap{display:grid;grid-template-columns:auto 1fr;gap:16px;
+  background:var(--panel);border:1px solid var(--border);border-radius:8px;
+  padding:22px;margin-bottom:16px;position:relative;overflow:hidden;}
+.signal-wrap::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold-dark),transparent);}
+.sig-circle{
+  width:110px;height:110px;border-radius:50%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;
+  flex-shrink:0;transition:all .4s;
 }
+.sig-circle.buy{
+  border:3px solid var(--buy);
+  box-shadow:0 0 30px rgba(0,229,160,.25),inset 0 0 20px rgba(0,229,160,.07);
+}
+.sig-circle.sell{
+  border:3px solid var(--sell);
+  box-shadow:0 0 30px rgba(255,56,96,.25),inset 0 0 20px rgba(255,56,96,.07);
+}
+.sig-circle.wait{border:3px solid var(--dim);box-shadow:0 0 15px rgba(100,150,180,.1);}
+.sig-txt{font-size:20px;font-weight:900;letter-spacing:3px;}
+.buy .sig-txt{color:var(--buy)}.sell .sig-txt{color:var(--sell)}.wait .sig-txt{color:var(--dim)}
+.sig-arrow{font-size:26px;margin-top:1px;}
+.buy .sig-arrow{color:var(--buy)}.sell .sig-arrow{color:var(--sell)}
 
-/* =========================
-   ★ 起動
-========================= */
-fetchGoldPrice();
-setInterval(fetchGoldPrice, 10000);
+.sig-rows{display:flex;flex-direction:column;gap:0;flex:1;}
+.srow{display:flex;justify-content:space-between;align-items:center;
+  padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.srow:last-child{border-bottom:none;}
+.slbl{font-size:10px;color:var(--dim);letter-spacing:2px;}
+.sval{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;}
+.tv-entry{color:var(--gold)}.tv-tp{color:var(--buy)}.tv-sl{color:var(--sell)}.tv-rr{color:#a78bfa}
 
-</script>
+.conf-wrap{margin-top:14px;}
+.conf-head{display:flex;justify-content:space-between;font-size:10px;
+  color:var(--dim);letter-spacing:2px;margin-bottom:7px;}
+.conf-pct{font-family:'Orbitron',sans-serif;color:var(--gold);font-size:12px;}
+.bar-track{height:7px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden;
+  border:1px solid rgba(255,215,0,.08);}
+.bar-fill{height:100%;border-radius:4px;
+  background:linear-gradient(90deg,var(--gold-dark),var(--gold),#fffca0);
+  box-shadow:0 0 8px var(--gold-glow);transition:width 1s cubic-bezier(.4,0,.2,1);}
 
-</body>
-</html>
+/* INDICATOR GRID */
+.ind-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.icard{
+  background:var(--panel);border:1px solid rgba(255,255,255,.06);
+  border-radius:6px;padding:12px 14px;position:relative;overflow:hidden;transition:all .25s;
+}
+.icard:hover{border-color:rgba(255,215,0,.2);transform:translateY(-1px);}
+.icard::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:2px 0 0 2px;}
+.icard.bull::before{background:var(--buy)}.icard.bear::before{background:var(--sell)}.icard.neut::before{background:var(--dim)}
+.iname{font-size:9px;color:var(--dim);letter-spacing:3px;margin-bottom:5px;}
+.ival{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;margin-bottom:3px;}
+.icard.bull .ival{color:var(--buy)}.icard.bear .ival{color:var(--sell)}.icard.neut .ival{color:var(--neutral)}
+.isig{font-size:9px;letter-spacing:2px;opacity:.6;}
+.icard.bull .isig{color:var(--buy)}.icard.bear .isig{color:var(--sell)}.icard.neut .isig{color:var(--neutral)}
+
+/* TF MATRIX */
+.tf-panel{background:var(--panel);border:1px solid var(--border);border-radius:8px;
+  
