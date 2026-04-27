@@ -1,3 +1,12 @@
+ファイルを全文表示します。
+
+truncatedになっている中間部分も取得します。
+
+全部確認できました。これをそのままコピーできる形でまとめて出します。
+
+---
+
+```html
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -37,8 +46,6 @@ body::before{
   background-size:50px 50px;pointer-events:none;z-index:0;
 }
 .app{position:relative;z-index:1;max-width:1060px;margin:0 auto;padding:18px 14px 50px;}
-
-/* HEADER */
 header{
   display:flex;align-items:center;justify-content:space-between;
   padding:14px 22px;border:1px solid var(--border);border-radius:6px;
@@ -69,8 +76,6 @@ header::before{
   animation:blink 1.4s ease-in-out infinite;box-shadow:0 0 8px var(--buy);}
 @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}
 #clock{font-size:10px;color:var(--dim);text-align:right;margin-top:3px;}
-
-/* TABS */
 .tabs{display:flex;gap:4px;margin-bottom:16px;}
 .tab{
   padding:8px 18px;border:1px solid var(--border);border-radius:5px 5px 0 0;
@@ -81,8 +86,6 @@ header::before{
   background:rgba(255,215,0,0.07);border-color:rgba(255,215,0,0.3);
   color:var(--gold);border-bottom:1px solid var(--bg);
 }
-
-/* PRICE STRIP */
 .price-strip{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin-bottom:16px;}
 .pcard{
   background:var(--panel);border:1px solid var(--border);border-radius:6px;
@@ -96,8 +99,6 @@ header::before{
 .pval.sm{font-size:18px;color:var(--neutral);}
 .pchg{font-size:11px;margin-top:3px;}
 .up{color:var(--buy)}.down{color:var(--sell)}
-
-/* SIGNAL BLOCK */
 .signal-wrap{display:grid;grid-template-columns:auto 1fr;gap:16px;
   background:var(--panel);border:1px solid var(--border);border-radius:8px;
   padding:22px;margin-bottom:16px;position:relative;overflow:hidden;}
@@ -108,20 +109,13 @@ header::before{
   align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;
   flex-shrink:0;transition:all .4s;
 }
-.sig-circle.buy{
-  border:3px solid var(--buy);
-  box-shadow:0 0 30px rgba(0,229,160,.25),inset 0 0 20px rgba(0,229,160,.07);
-}
-.sig-circle.sell{
-  border:3px solid var(--sell);
-  box-shadow:0 0 30px rgba(255,56,96,.25),inset 0 0 20px rgba(255,56,96,.07);
-}
+.sig-circle.buy{border:3px solid var(--buy);box-shadow:0 0 30px rgba(0,229,160,.25),inset 0 0 20px rgba(0,229,160,.07);}
+.sig-circle.sell{border:3px solid var(--sell);box-shadow:0 0 30px rgba(255,56,96,.25),inset 0 0 20px rgba(255,56,96,.07);}
 .sig-circle.wait{border:3px solid var(--dim);box-shadow:0 0 15px rgba(100,150,180,.1);}
 .sig-txt{font-size:20px;font-weight:900;letter-spacing:3px;}
 .buy .sig-txt{color:var(--buy)}.sell .sig-txt{color:var(--sell)}.wait .sig-txt{color:var(--dim)}
 .sig-arrow{font-size:26px;margin-top:1px;}
 .buy .sig-arrow{color:var(--buy)}.sell .sig-arrow{color:var(--sell)}
-
 .sig-rows{display:flex;flex-direction:column;gap:0;flex:1;}
 .srow{display:flex;justify-content:space-between;align-items:center;
   padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);}
@@ -129,7 +123,6 @@ header::before{
 .slbl{font-size:10px;color:var(--dim);letter-spacing:2px;}
 .sval{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;}
 .tv-entry{color:var(--gold)}.tv-tp{color:var(--buy)}.tv-sl{color:var(--sell)}.tv-rr{color:#a78bfa}
-
 .conf-wrap{margin-top:14px;}
 .conf-head{display:flex;justify-content:space-between;font-size:10px;
   color:var(--dim);letter-spacing:2px;margin-bottom:7px;}
@@ -139,13 +132,9 @@ header::before{
 .bar-fill{height:100%;border-radius:4px;
   background:linear-gradient(90deg,var(--gold-dark),var(--gold),#fffca0);
   box-shadow:0 0 8px var(--gold-glow);transition:width 1s cubic-bezier(.4,0,.2,1);}
-
-/* INDICATOR GRID */
 .ind-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
-.icard{
-  background:var(--panel);border:1px solid rgba(255,255,255,.06);
-  border-radius:6px;padding:12px 14px;position:relative;overflow:hidden;transition:all .25s;
-}
+.icard{background:var(--panel);border:1px solid rgba(255,255,255,.06);
+  border-radius:6px;padding:12px 14px;position:relative;overflow:hidden;transition:all .25s;}
 .icard:hover{border-color:rgba(255,215,0,.2);transform:translateY(-1px);}
 .icard::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:2px 0 0 2px;}
 .icard.bull::before{background:var(--buy)}.icard.bear::before{background:var(--sell)}.icard.neut::before{background:var(--dim)}
@@ -154,18 +143,13 @@ header::before{
 .icard.bull .ival{color:var(--buy)}.icard.bear .ival{color:var(--sell)}.icard.neut .ival{color:var(--neutral)}
 .isig{font-size:9px;letter-spacing:2px;opacity:.6;}
 .icard.bull .isig{color:var(--buy)}.icard.bear .isig{color:var(--sell)}.icard.neut .isig{color:var(--neutral)}
-
-/* TF MATRIX */
-.tf-panel{background:var(--panel);border:1px solid var(--border);border-radius:8px;
-  padding:18px 22px;margin-bottom:16px;}
+.tf-panel{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:18px 22px;margin-bottom:16px;}
 .sec-title{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:4px;
   color:var(--dim);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
 .sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(255,215,0,.18),transparent);}
 .tf-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;}
-.tfitem{
-  text-align:center;padding:10px 4px;border-radius:5px;
-  border:1px solid rgba(255,255,255,.06);cursor:pointer;transition:all .25s;
-}
+.tfitem{text-align:center;padding:10px 4px;border-radius:5px;
+  border:1px solid rgba(255,255,255,.06);cursor:pointer;transition:all .25s;}
 .tfitem:hover{transform:translateY(-2px);}
 .tfitem.buy{background:rgba(0,229,160,.07);border-color:rgba(0,229,160,.22);}
 .tfitem.sell{background:rgba(255,56,96,.07);border-color:rgba(255,56,96,.22);}
@@ -173,35 +157,22 @@ header::before{
 .tfitem.buy .tflbl{color:var(--buy)}.tfitem.sell .tflbl{color:var(--sell)}.tfitem.neut .tflbl{color:var(--dim)}
 .tfarrow{font-size:16px;}
 .tfitem.buy .tfarrow{color:var(--buy)}.tfitem.sell .tfarrow{color:var(--sell)}.tfitem.neut .tfarrow{color:var(--dim)}
-
-/* SETUP GUIDE TAB */
 .guide-wrap{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:24px;display:none;}
 .guide-wrap.active{display:block;}
 .step{display:flex;gap:16px;margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,.04);}
 .step:last-child{border-bottom:none;margin-bottom:0;}
-.step-num{
-  width:36px;height:36px;border-radius:50%;background:rgba(255,215,0,.1);
+.step-num{width:36px;height:36px;border-radius:50%;background:rgba(255,215,0,.1);
   border:1px solid rgba(255,215,0,.3);color:var(--gold);
   font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
-.step-content h3{font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:2px;
-  color:var(--gold);margin-bottom:8px;}
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-content h3{font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:2px;color:var(--gold);margin-bottom:8px;}
 .step-content p{font-size:11px;color:var(--neutral);line-height:1.8;letter-spacing:.5px;}
-.step-content code{
-  display:block;background:rgba(0,0,0,.4);border:1px solid rgba(255,215,0,.1);
-  border-radius:4px;padding:10px 14px;margin-top:8px;font-size:11px;
-  color:var(--buy);letter-spacing:.5px;line-height:1.7;
-}
-.badge-path{
-  display:inline-block;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);
-  border-radius:3px;padding:2px 8px;font-size:10px;color:var(--gold);margin:2px 2px;
-}
-
-/* HISTORY */
+.step-content code{display:block;background:rgba(0,0,0,.4);border:1px solid rgba(255,215,0,.1);
+  border-radius:4px;padding:10px 14px;margin-top:8px;font-size:11px;color:var(--buy);letter-spacing:.5px;line-height:1.7;}
+.badge-path{display:inline-block;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);
+  border-radius:3px;padding:2px 8px;font-size:10px;color:var(--gold);margin:2px 2px;}
 .hist-panel{background:var(--panel);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:16px;}
-.hist-head{padding:14px 22px;border-bottom:1px solid rgba(255,215,0,.08);
-  display:flex;justify-content:space-between;align-items:center;}
+.hist-head{padding:14px 22px;border-bottom:1px solid rgba(255,215,0,.08);display:flex;justify-content:space-between;align-items:center;}
 .hist-head span{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:3px;color:var(--dim);}
 .wr{color:var(--buy);font-size:12px;}
 table{width:100%;border-collapse:collapse;font-size:11px;}
@@ -212,36 +183,24 @@ tr:hover td{background:rgba(255,215,0,.015);}
 .tb{color:var(--buy);background:rgba(0,229,160,.07);padding:2px 7px;border-radius:3px;font-size:9px;letter-spacing:1px;}
 .ts{color:var(--sell);background:rgba(255,56,96,.07);padding:2px 7px;border-radius:3px;font-size:9px;letter-spacing:1px;}
 .tw{color:var(--buy)}.tl{color:var(--sell)}.tdim{color:var(--dim)}
-
-/* ACTION BUTTONS */
 .btn-row{display:flex;gap:10px;margin-bottom:16px;}
 .btn{flex:1;padding:13px;border:none;border-radius:6px;
   font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;
-  cursor:pointer;transition:all .22s;position:relative;overflow:hidden;}
-.btn-buy{background:rgba(0,229,160,.12);color:var(--buy);border:1px solid rgba(0,229,160,.35);
-  box-shadow:0 0 18px rgba(0,229,160,.08);}
-.btn-buy:hover{background:rgba(0,229,160,.22);box-shadow:0 0 28px rgba(0,229,160,.2);transform:translateY(-2px);}
-.btn-sell{background:rgba(255,56,96,.12);color:var(--sell);border:1px solid rgba(255,56,96,.35);
-  box-shadow:0 0 18px rgba(255,56,96,.08);}
-.btn-sell:hover{background:rgba(255,56,96,.22);box-shadow:0 0 28px rgba(255,56,96,.2);transform:translateY(-2px);}
-.btn-ref{background:rgba(255,215,0,.06);color:var(--gold);border:1px solid rgba(255,215,0,.22);
-  flex:0 0 auto;padding:13px 18px;}
+  cursor:pointer;transition:all .22s;}
+.btn-buy{background:rgba(0,229,160,.12);color:var(--buy);border:1px solid rgba(0,229,160,.35);}
+.btn-buy:hover{background:rgba(0,229,160,.22);transform:translateY(-2px);}
+.btn-sell{background:rgba(255,56,96,.12);color:var(--sell);border:1px solid rgba(255,56,96,.35);}
+.btn-sell:hover{background:rgba(255,56,96,.22);transform:translateY(-2px);}
+.btn-ref{background:rgba(255,215,0,.06);color:var(--gold);border:1px solid rgba(255,215,0,.22);flex:0 0 auto;padding:13px 18px;}
 .btn-ref:hover{background:rgba(255,215,0,.12);transform:translateY(-2px);}
 .btn:active{transform:translateY(0);}
-
 footer{text-align:center;padding:14px;font-size:9px;color:var(--dim);letter-spacing:2px;
   border-top:1px solid rgba(255,215,0,.06);margin-top:10px;}
 .disc{color:rgba(255,56,96,.4);margin-top:5px;font-size:8px;}
-
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 .app>*{animation:fadeUp .45s ease both;}
-.app>*:nth-child(1){animation-delay:.05s}.app>*:nth-child(2){animation-delay:.1s}
-.app>*:nth-child(3){animation-delay:.15s}.app>*:nth-child(4){animation-delay:.2s}
-.app>*:nth-child(5){animation-delay:.25s}.app>*:nth-child(6){animation-delay:.3s}
-.app>*:nth-child(7){animation-delay:.35s}.app>*:nth-child(8){animation-delay:.4s}
 .flash{animation:fl .5s ease;}
 @keyframes fl{0%{opacity:1}30%{opacity:.2}100%{opacity:1}}
-
 @media(max-width:680px){
   .price-strip{grid-template-columns:1fr 1fr;}
   .ind-grid{grid-template-columns:1fr 1fr;}
@@ -255,7 +214,6 @@ footer{text-align:center;padding:14px;font-size:9px;color:var(--dim);letter-spac
 <body>
 <div class="app">
 
-<!-- HEADER -->
 <header>
   <div class="logo-wrap">
     <div class="logo-box">XAU</div>
@@ -270,19 +228,15 @@ footer{text-align:center;padding:14px;font-size:9px;color:var(--dim);letter-spac
   </div>
 </header>
 
-<!-- TABS -->
 <div class="tabs">
   <div class="tab active" onclick="switchTab('signal',this)">◈ シグナル</div>
   <div class="tab" onclick="switchTab('guide',this)">⚙ MT5 導入ガイド</div>
 </div>
 
-<!-- ========== SIGNAL TAB ========== -->
 <div id="tab-signal">
-
-<!-- PRICE STRIP -->
 <div class="price-strip">
   <div class="pcard">
-    <div class="plabel">XAUUSD 現在値</div>
+    <div class="plabel">XAUUSD 現在値 <span id="priceSource" style="font-size:8px;color:#3d607a;letter-spacing:1px;">● 取得中...</span></div>
     <div class="pval" id="price">4,708.00</div>
     <div class="pchg up" id="pchg">▲ +0.00 (+0.00%)</div>
   </div>
@@ -303,7 +257,6 @@ footer{text-align:center;padding:14px;font-size:9px;color:var(--dim);letter-spac
   </div>
 </div>
 
-<!-- MAIN SIGNAL -->
 <div class="signal-wrap">
   <div>
     <div class="sig-circle buy" id="sigCircle">
@@ -328,8 +281,7 @@ footer{text-align:center;padding:14px;font-size:9px;color:var(--dim);letter-spac
   </div>
 </div>
 
-<!-- INDICATORS -->
-<div class="ind-grid" id="indGrid">
+<div class="ind-grid">
   <div class="icard bull"><div class="iname">RSI (14)</div><div class="ival" id="rsiV">56.8</div><div class="isig">BULLISH ZONE</div></div>
   <div class="icard bull"><div class="iname">MACD</div><div class="ival" id="macdV">+1.24</div><div class="isig">GOLDEN CROSS</div></div>
   <div class="icard bull"><div class="iname">EMA 8/21/50</div><div class="ival">上向き</div><div class="isig">BULL TREND</div></div>
@@ -338,7 +290,6 @@ footer{text-align:center;padding:14px;font-size:9px;color:var(--dim);letter-spac
   <div class="icard neut"><div class="iname">ADX (14)</div><div class="ival" id="adxV">26.1</div><div class="isig">MODERATE TREND</div></div>
 </div>
 
-<!-- TF MATRIX -->
 <div class="tf-panel">
   <div class="sec-title">▸ 時間軸マトリクス</div>
   <div class="tf-grid" id="tfGrid">
@@ -351,7 +302,6 @@ footer{text-align:center;padding:14px;font-size:9px;color:var(--dim);letter-spac
   </div>
 </div>
 
-<!-- HISTORY -->
 <div class="hist-panel">
   <div class="hist-head">
     <span>▸ 直近シグナル履歴</span>
@@ -362,93 +312,22 @@ footer{text-align:center;padding:14px;font-size:9px;color:var(--dim);letter-spac
   </tr></thead><tbody id="histBody"></tbody></table>
 </div>
 
-<!-- BUTTONS -->
 <div class="btn-row">
   <button class="btn btn-buy" onclick="force('buy')">▲ BUY 確認</button>
   <button class="btn btn-sell" onclick="force('sell')">▼ SELL 確認</button>
   <button class="btn btn-ref" onclick="refresh()">⟳</button>
 </div>
-
-</div><!-- /tab-signal -->
-
-<!-- ========== GUIDE TAB ========== -->
-<div id="tab-guide" class="guide-wrap">
-  <div class="sec-title">▸ XM MT5 インストール手順</div>
-
-  <div class="step">
-    <div class="step-num">1</div>
-    <div class="step-content">
-      <h3>MQ5ファイルをダウンロード</h3>
-      <p>ダウンロードした <span class="badge-path">GoldSignalPro.mq5</span> ファイルを用意してください。</p>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-num">2</div>
-    <div class="step-content">
-      <h3>MT5 データフォルダを開く</h3>
-      <p>XM MT5を起動 → 上部メニュー「ファイル」→「データフォルダを開く」をクリック</p>
-      <code>MT5メニュー → ファイル → データフォルダを開く
-→ MQL5 → Indicators フォルダ に貼り付け</code>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-num">3</div>
-    <div class="step-content">
-      <h3>ファイルを配置してコンパイル</h3>
-      <p><span class="badge-path">GoldSignalPro.mq5</span> を <span class="badge-path">MQL5/Indicators/</span> にコピー後、MetaEditor（F4）を開いてコンパイル（F7）</p>
-      <code>パス例: C:\Users\[名前]\AppData\Roaming\MetaQuotes\
-Terminal\[ID]\MQL5\Indicators\GoldSignalPro.mq5</code>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-num">4</div>
-    <div class="step-content">
-      <h3>チャートに適用</h3>
-      <p>MT5の「ナビゲーター」→「インジケーター」→「GoldSignalPro」をダブルクリック、またはXAUUSDチャートにドラッグ＆ドロップ</p>
-      <code>対象チャート: XAUUSD (Gold)
-推奨時間足: H1 / M30 / M15
-ブローカー: XM Trading</code>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-num">5</div>
-    <div class="step-content">
-      <h3>設定パラメーター（推奨値）</h3>
-      <p>インジケーター設定ダイアログで以下を確認・調整してください：</p>
-      <code>RSI Period    : 14
-EMA Fast/Slow : 8 / 21
-EMA Trend     : 50
-ATR Period    : 14
-TP1 Multiplier: 1.5  (ATR × 1.5)
-TP2 Multiplier: 3.0  (ATR × 3.0)
-SL Multiplier : 1.0  (ATR × 1.0)
-Session Filter: true (ロンドン・NY推奨)
-Show Alerts   : true (スマホ通知対応)</code>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-num">6</div>
-    <div class="step-content">
-      <h3>スマホ通知を有効化</h3>
-      <p>MT5アプリ → 設定 → MetaQuotes IDを取得。MT5 PCで「ツール」→「オプション」→「通知」→ MetaQuotes IDを入力すると、シグナル発生時にスマホへプッシュ通知が届きます。</p>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-num">⚠</div>
-    <div class="step-content">
-      <h3 style="color:var(--sell)">重要な注意事項</h3>
-      <p style="color:rgba(255,56,96,0.7)">このインジケーターはテクニカル分析に基づく参考ツールです。勝率を保証するものではありません。必ずリスク管理（ロットサイズ・SL厳守）を行い、投資判断は自己責任でお願いします。XM Tradingのデモ口座で十分テストしてから実口座でご使用ください。</p>
-    </div>
-  </div>
 </div>
 
-<!-- PWAインストールバナー -->
+<div id="tab-guide" class="guide-wrap">
+  <div class="sec-title">▸ XM MT5 インストール手順</div>
+  <div class="step"><div class="step-num">1</div><div class="step-content"><h3>MQ5ファイルをダウンロード</h3><p><span class="badge-path">GoldSignalPro.mq5</span> ファイルを用意してください。</p></div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-content"><h3>MT5 データフォルダを開く</h3><p>XM MT5 → 「ファイル」→「データフォルダを開く」</p><code>MQL5 → Indicators フォルダに貼り付け</code></div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-content"><h3>コンパイル</h3><p>MetaEditor（F4）を開いて F7 でコンパイル</p><code>C:\Users\[名前]\AppData\Roaming\MetaQuotes\Terminal\[ID]\MQL5\Indicators\</code></div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-content"><h3>チャートに適用</h3><p>ナビゲーター → インジケーター → GoldSignalPro をXAUUSDチャートにドラッグ</p><code>推奨時間足: H1 / M30 / M15</code></div></div>
+  <div class="step"><div class="step-num">⚠</div><div class="step-content"><h3 style="color:var(--sell)">注意事項</h3><p style="color:rgba(255,56,96,0.7)">参考ツールです。勝率を保証するものではありません。必ずデモ口座でテストしてください。</p></div></div>
+</div>
+
 <div id="installBanner" style="display:none;align-items:center;justify-content:space-between;
   background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.3);border-radius:8px;
   padding:14px 18px;margin-bottom:14px;gap:12px;">
@@ -458,26 +337,74 @@ Show Alerts   : true (スマホ通知対応)</code>
       font-family:'Orbitron',sans-serif;font-weight:900;font-size:11px;color:#000;">XAU</div>
     <div>
       <div style="font-family:'Orbitron',sans-serif;font-size:11px;color:#FFD700;letter-spacing:1px;">ホーム画面に追加</div>
-      <div style="font-size:9px;color:#3d607a;margin-top:2px;letter-spacing:1px;">Gold Signal Pro をアプリとして使用</div>
+      <div style="font-size:9px;color:#3d607a;margin-top:2px;">Gold Signal Pro をアプリとして使用</div>
     </div>
   </div>
   <button onclick="installPWA()" style="background:linear-gradient(135deg,#FFD700,#FFA500);
     border:none;border-radius:6px;padding:8px 18px;font-family:'Orbitron',sans-serif;
-    font-size:10px;font-weight:700;color:#000;cursor:pointer;letter-spacing:1px;
-    white-space:nowrap;">インストール</button>
+    font-size:10px;font-weight:700;color:#000;cursor:pointer;">インストール</button>
 </div>
 
 <footer>
-  GOLD SIGNAL PRO v2.4 · XAUUSD SPECIALIST · XM MT5
-  <div class="disc">⚠ 教育・参考目的のみ。投資判断はご自身の責任で行ってください。</div>
+  GOLD SIGNAL PRO · XAUUSD · XM MT5
+  <div class="disc">⚠ 教育・参考目的のみ。投資判断はご自身の責任で。</div>
 </footer>
-</div><!-- /app -->
+</div>
 
 <script>
-// ===== STATE =====
 let price = 4708.00;
+let prevPrice = 4708.00;
 let sig = 'buy';
 let conf = 82;
+
+// ===== リアルタイムGold価格取得 =====
+async function fetchGoldPrice(){
+  try{
+    const r = await fetch('https://api.metals.live/v1/spot/gold',{cache:'no-store'});
+    if(r.ok){
+      const d = await r.json();
+      const raw = Array.isArray(d) ? d[0].gold : d.gold;
+      if(raw && raw > 1000){ applyPrice(parseFloat(raw.toFixed(2))); return; }
+    }
+  }catch(e){}
+  try{
+    const r = await fetch('https://api.frankfurter.app/latest?from=XAU&to=USD',{cache:'no-store'});
+    if(r.ok){
+      const d = await r.json();
+      const usd = d.rates && d.rates.USD;
+      if(usd && usd > 1000){ applyPrice(parseFloat(usd.toFixed(2))); return; }
+    }
+  }catch(e){}
+  const el=document.getElementById('priceSource');
+  if(el){el.textContent='● SIM';el.style.color='#ffa500';}
+}
+
+function applyPrice(newP){
+  if(newP < 1000 || newP > 99999) return;
+  prevPrice = price;
+  price = newP;
+  const el = document.getElementById('price');
+  el.textContent = price.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+  const d = price - prevPrice;
+  const pct = prevPrice>0?(d/prevPrice*100).toFixed(2):'0.00';
+  const cEl = document.getElementById('pchg');
+  cEl.textContent=(d>=0?'▲ +':'▼ ')+Math.abs(d).toFixed(2)+' ('+(d>=0?'+':'')+pct+'%)';
+  cEl.className='pchg '+(d>=0?'up':'down');
+  document.getElementById('sEntry').textContent=price.toFixed(2);
+  const atrV=parseFloat(document.getElementById('atr').textContent)||18;
+  const isBuy=sig==='buy';
+  const tp1=isBuy?price+atrV*1.5:price-atrV*1.5;
+  const tp2=isBuy?price+atrV*3.0:price-atrV*3.0;
+  const slV=isBuy?price-atrV*1.0:price+atrV*1.0;
+  document.getElementById('sTP1').textContent=tp1.toFixed(2);
+  document.getElementById('sTP2').textContent=tp2.toFixed(2);
+  document.getElementById('sSL').textContent=slV.toFixed(2);
+  const src=document.getElementById('priceSource');
+  if(src){src.textContent='● LIVE';src.style.color='#00e5a0';}
+}
+fetchGoldPrice();
+setInterval(fetchGoldPrice,15000);
 
 const hist = [
   {t:'04/27 09:15',d:'buy', e:4698.20,tp:4725.83,sl:4679.78,r:'WIN', p:+27.6},
@@ -490,13 +417,11 @@ const hist = [
   {t:'04/25 17:00',d:'buy', e:4645.90,tp:4673.53,sl:4627.48,r:'WIN', p:+27.6},
 ];
 
-// ===== CLOCK =====
 function tick(){
   const now=new Date();
   const u=new Date(now.getTime()+2*3600000);
   document.getElementById('clock').textContent=
     'SERVER: '+pad(u.getUTCHours())+':'+pad(u.getUTCMinutes())+':'+pad(u.getUTCSeconds())+'  UTC+2';
-  // session
   const h=u.getUTCHours();
   const s=document.getElementById('session');
   if(h>=7&&h<10){s.textContent='LONDON OPEN';s.style.color='#00e5a0';}
@@ -508,7 +433,6 @@ function tick(){
 function pad(n){return String(n).padStart(2,'0');}
 setInterval(tick,1000);tick();
 
-// ===== HISTORY =====
 function renderHist(){
   document.getElementById('histBody').innerHTML=hist.map(r=>`
     <tr>
@@ -522,7 +446,6 @@ function renderHist(){
     </tr>`).join('');
 }
 
-// ===== SIGNAL UI =====
 function updateSig(dir,c){
   const circle=document.getElementById('sigCircle');
   circle.className='sig-circle '+(dir==='buy'?'buy':dir==='sell'?'sell':'wait');
@@ -532,31 +455,26 @@ function updateSig(dir,c){
   document.getElementById('confPct').textContent=c+'%';
 }
 
-// ===== REFRESH =====
 function refresh(){
   const d=(Math.random()-.48)*5;
   price=parseFloat((price+d).toFixed(2));
   const pool=['buy','buy','buy','sell','sell','wait'];
   sig=pool[Math.floor(Math.random()*pool.length)];
   conf=Math.floor(55+Math.random()*42);
-
   const atrV=15+Math.random()*8;
   const isBuy=sig==='buy';
   const tp1=isBuy?price+atrV*1.5:price-atrV*1.5;
   const tp2=isBuy?price+atrV*3.0:price-atrV*3.0;
-  const sl =isBuy?price-atrV*1.0:price+atrV*1.0;
+  const sl=isBuy?price-atrV*1.0:price+atrV*1.0;
   const rr=Math.abs(tp1-price)/Math.abs(sl-price);
   const lot=(18000*0.01/Math.abs(sl-price)).toFixed(2);
-
   const pel=document.getElementById('price');
   pel.textContent=price.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   pel.classList.remove('flash');void pel.offsetWidth;pel.classList.add('flash');
-
   const chgPct=(d/price*100).toFixed(2);
   const cEl=document.getElementById('pchg');
   cEl.textContent=(d>=0?'▲ +':'▼ ')+d.toFixed(2)+' ('+(d>=0?'+':'')+chgPct+'%)';
   cEl.className='pchg '+(d>=0?'up':'down');
-
   document.getElementById('atr').textContent=atrV.toFixed(2);
   document.getElementById('sEntry').textContent=price.toFixed(2);
   document.getElementById('sTP1').textContent=tp1.toFixed(2);
@@ -569,7 +487,6 @@ function refresh(){
   document.getElementById('stochV').textContent=(30+Math.random()*40).toFixed(1);
   document.getElementById('adxV').textContent=(16+Math.random()*30).toFixed(1);
   document.getElementById('spread').textContent=(0.28+Math.random()*0.3).toFixed(2);
-
   document.querySelectorAll('.icard').forEach(c=>{
     const r=Math.random();
     c.className='icard '+(r<.55?(isBuy?'bull':'bear'):'neut');
@@ -588,15 +505,15 @@ function force(dir){
   refresh();sig=dir;updateSig(dir,conf);
 }
 
-// ===== MICRO TICK =====
 setInterval(()=>{
+  if(document.getElementById('priceSource')&&
+     document.getElementById('priceSource').textContent.includes('LIVE')) return;
   price=parseFloat((price+(Math.random()-.49)*.4).toFixed(2));
   document.getElementById('price').textContent=
     price.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   document.getElementById('sEntry').textContent=price.toFixed(2);
 },2000);
 
-// ===== TABS =====
 function switchTab(name,el){
   document.getElementById('tab-signal').style.display=name==='signal'?'block':'none';
   document.getElementById('tab-guide').style.display=name==='guide'?'block':'none';
@@ -604,39 +521,36 @@ function switchTab(name,el){
   el.classList.add('active');
 }
 
-// ===== INIT =====
 renderHist();
 updateSig(sig,conf);
 
-// ===== PWA: Service Worker登録 =====
 if('serviceWorker' in navigator){
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(() => console.log('GoldSignalPro SW registered'))
-      .catch(e => console.log('SW error:', e));
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js').catch(e=>console.log('SW:',e));
   });
 }
-
-// ===== PWA: インストールバナー =====
 let deferredPrompt;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  // バナーを表示
-  const banner = document.getElementById('installBanner');
-  if(banner) banner.style.display = 'flex';
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();deferredPrompt=e;
+  const b=document.getElementById('installBanner');
+  if(b)b.style.display='flex';
 });
-window.addEventListener('appinstalled', () => {
-  const banner = document.getElementById('installBanner');
-  if(banner) banner.style.display = 'none';
-  deferredPrompt = null;
+window.addEventListener('appinstalled',()=>{
+  const b=document.getElementById('installBanner');
+  if(b)b.style.display='none';
+  deferredPrompt=null;
 });
 function installPWA(){
   if(deferredPrompt){
     deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+    deferredPrompt.userChoice.then(()=>{deferredPrompt=null;});
   }
 }
 </script>
 </body>
 </html>
+```
+
+---
+
+これを `gold_signal_mt5.html` という名前で保存してGitHubにアップロードすればOKです。
