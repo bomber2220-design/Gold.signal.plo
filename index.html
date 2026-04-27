@@ -3,325 +3,142 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GOLD SIGNAL PRO | MT5 Setup Guide</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#FFD700">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Gold Signal">
-<link rel="apple-touch-icon" href="icon-192.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+<title>GOLD SIGNAL PRO | SOUND MODE</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 :root {
   --gold: #FFD700; --gold2: #FFA500; --gold-dark: #B8860B;
-  --gold-glow: rgba(255,215,0,0.3);
-  --bg: #04080d; --bg2: #080f18; --panel: rgba(8,14,22,0.97);
-  --buy: #00e5a0; --sell: #ff3860; --neutral: #7aabcc;
-  --text: #c8e4ff; --dim: #3d607a;
+  --bg: #04080d; --panel: rgba(8,14,22,0.97);
+  --buy: #00e5a0; --sell: #ff3860; --text: #c8e4ff; --dim: #3d607a;
   --border: rgba(255,215,0,0.13);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{
-  background:var(--bg);color:var(--text);
-  font-family:'Share Tech Mono',monospace;
-  min-height:100vh;overflow-x:hidden;
-}
-body::before{
-  content:'';position:fixed;inset:0;
-  background-image:
-    linear-gradient(rgba(255,215,0,0.025) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,215,0,0.025) 1px,transparent 1px);
-  background-size:50px 50px;pointer-events:none;z-index:0;
-}
-.app{position:relative;z-index:1;max-width:1060px;margin:0 auto;padding:18px 14px 50px;}
-
-/* HEADER */
-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:14px 22px;border:1px solid var(--border);border-radius:6px;
-  background:var(--panel);margin-bottom:16px;position:relative;overflow:hidden;
-}
-.logo-wrap{display:flex;align-items:center;gap:12px;}
-.logo-box{
-  width:44px;height:44px;background:linear-gradient(135deg,var(--gold),var(--gold2));
-  border-radius:6px;display:flex;align-items:center;justify-content:center;
-  font-family:'Orbitron',sans-serif;font-weight:900;font-size:13px;color:#000;
-  box-shadow:0 0 22px var(--gold-glow);
-}
-.logo-name{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:700;
-  color:var(--gold);letter-spacing:2px;text-shadow:0 0 16px var(--gold-glow);}
-.logo-sub{font-size:9px;color:var(--dim);letter-spacing:3px;margin-top:2px;}
-.live-pill{
-  display:flex;align-items:center;gap:6px;
-  background:rgba(0,229,160,0.08);border:1px solid rgba(0,229,160,0.25);
-  border-radius:20px;padding:5px 14px;font-size:10px;color:var(--buy);letter-spacing:2px;
-}
-.dot{width:7px;height:7px;background:var(--buy);border-radius:50%;
-  animation:blink 1.4s ease-in-out infinite;box-shadow:0 0 8px var(--buy);}
-@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}
-
-/* TABS */
-.tabs{display:flex;gap:4px;margin-bottom:16px;}
-.tab{
-  padding:10px 20px;border:1px solid var(--border);border-radius:5px 5px 0 0;
-  cursor:pointer;font-size:11px;letter-spacing:2px;color:var(--dim);
-  background:rgba(8,14,22,0.5);transition:all .25s;
-}
-.tab.active{
-  background:rgba(255,215,0,0.07);border-color:rgba(255,215,0,0.3);
-  color:var(--gold);border-bottom:1px solid var(--bg);
-}
-
-/* PRICE STRIP */
-.price-strip{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin-bottom:16px;}
-.pcard{
-  background:var(--panel);border:1px solid var(--border);border-radius:6px;
-  padding:14px 18px;position:relative;overflow:hidden;
-}
-.plabel{font-size:9px;color:var(--dim);letter-spacing:3px;margin-bottom:6px;}
-.pval{font-family:'Orbitron',sans-serif;font-size:26px;font-weight:700;
-  color:var(--gold);text-shadow:0 0 14px var(--gold-glow);}
-.pval.sm{font-size:18px;color:var(--neutral);}
-.pchg{font-size:11px;margin-top:3px;}
-.up{color:var(--buy)}.down{color:var(--sell)}
-
-/* WIDGET AREA */
-.widget-wrap{
-  background:var(--panel);border:1px solid var(--border);border-radius:8px;
-  padding:2px;margin-bottom:16px;height:72px;overflow:hidden;
-}
-
-/* SIGNAL BLOCK */
-.signal-wrap{display:grid;grid-template-columns:auto 1fr;gap:16px;
-  background:var(--panel);border:1px solid var(--border);border-radius:8px;
-  padding:22px;margin-bottom:16px;position:relative;overflow:hidden;}
-.sig-circle{
-  width:110px;height:110px;border-radius:50%;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;
-  flex-shrink:0;transition:all .4s;
-}
-.sig-circle.buy{border:3px solid var(--buy);box-shadow:0 0 30px rgba(0,229,160,.25);}
-.sig-circle.sell{border:3px solid var(--sell);box-shadow:0 0 30px rgba(255,56,96,.25);}
-.sig-txt{font-size:20px;font-weight:900;letter-spacing:3px;}
-.buy .sig-txt{color:var(--buy)}.sell .sig-txt{color:var(--sell)}
-
-.sig-rows{display:flex;flex-direction:column;gap:0;flex:1;}
-.srow{display:flex;justify-content:space-between;align-items:center;
-  padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;min-height:100vh;}
+.app{max-width:1060px;margin:0 auto;padding:18px 14px 50px;}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border:1px solid var(--border);border-radius:6px;background:var(--panel);margin-bottom:16px;}
+.logo-box{width:44px;height:44px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#000;}
+.price-strip{display:grid;grid-template-columns:2fr 1fr;gap:10px;margin-bottom:16px;}
+.pcard{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:14px 18px;}
+.pval{font-family:'Orbitron',sans-serif;font-size:26px;font-weight:700;color:var(--gold);}
+.signal-wrap{display:grid;grid-template-columns:auto 1fr;gap:16px;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:22px;margin-bottom:16px;}
+.sig-circle{width:110px;height:110px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid var(--dim);}
+.sig-circle.buy{border-color:var(--buy);box-shadow:0 0 30px rgba(0,229,160,.25);}
+.sig-circle.sell{border-color:var(--sell);box-shadow:0 0 30px rgba(255,56,96,.25);}
+.sig-rows{display:flex;flex-direction:column;flex:1;}
+.srow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);}
 .slbl{font-size:10px;color:var(--dim);letter-spacing:2px;}
 .sval{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;}
-
-/* TF & INDICATORS */
-.ind-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
-.icard{background:var(--panel);border:1px solid rgba(255,255,255,.06);
-  border-radius:6px;padding:12px 14px;position:relative;overflow:hidden;}
-.icard.bull::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--buy);}
-.icard.bear::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--sell);}
-.iname{font-size:9px;color:var(--dim);letter-spacing:3px;margin-bottom:5px;}
-.ival{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;}
-
-.guide-wrap{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:24px;display:none;}
-.guide-wrap.active{display:block;}
-
 .btn-row{display:flex;gap:10px;margin-bottom:16px;}
-.btn{flex:1;padding:13px;border:none;border-radius:6px;
-  font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;
-  cursor:pointer;transition:all .22s;}
-.btn-buy{background:rgba(0,229,160,0.12);color:var(--buy);border:1px solid rgba(0,229,160,0.35);}
-.btn-sell{background:rgba(255,56,96,0.12);color:var(--sell);border:1px solid rgba(255,56,96,0.35);}
-.btn-ref{background:rgba(255,215,0,0.06);color:var(--gold);border:1px solid rgba(255,215,0,0.22);padding:13px 18px;}
-
-footer{text-align:center;padding:20px;font-size:9px;color:var(--dim);letter-spacing:2px;}
-
-@media(max-width:680px){
-  .price-strip{grid-template-columns:1fr 1fr;}
-  .ind-grid{grid-template-columns:1fr 1fr;}
-  .signal-wrap{grid-template-columns:1fr;}
-}
+.btn{flex:1;padding:15px;border:none;border-radius:8px;font-family:'Orbitron',sans-serif;font-weight:700;cursor:pointer;}
+.btn-buy{background:rgba(0,229,160,0.1);color:var(--buy);border:1px solid var(--buy);}
+.btn-sell{background:rgba(255,56,96,0.1);color:var(--sell);border:1px solid var(--sell);}
 </style>
 </head>
 <body>
 <div class="app">
-
 <header>
-  <div class="logo-wrap">
+  <div style="display:flex;align-items:center;gap:12px;">
     <div class="logo-box">XAU</div>
-    <div>
-      <div class="logo-name">GOLD SIGNAL PRO</div>
-      <div class="logo-sub">REAL-TIME DATA HUB</div>
-    </div>
+    <div style="font-family:'Orbitron';font-weight:700;color:var(--gold)">GOLD SIGNAL PRO</div>
   </div>
-  <div class="live-pill"><span class="dot"></span>LIVE DATA</div>
+  <div id="status" style="font-size:10px;color:var(--buy)">● ONLINE</div>
 </header>
 
-<div class="widget-wrap">
-    <div class="tradingview-widget-container">
-        <div class="tradingview-widget-container__widget"></div>
-        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-tickers.js" async>
-        {
-        "symbols": [
-          {
-            "proName": "FX_IDC:XAUUSD",
-            "title": "Gold"
-          }
-        ],
-        "colorTheme": "dark",
-        "isTransparent": true,
-        "showSymbolLogo": true,
-        "locale": "ja"
-      }
-        </script>
-    </div>
+<div class="price-strip">
+  <div class="pcard">
+    <div style="font-size:9px;color:var(--dim);">LIVE PRICE (XAU/USD)</div>
+    <div class="pval" id="livePrice">----.--</div>
+  </div>
+  <div class="pcard">
+    <div style="font-size:9px;color:var(--dim);">VOLUME</div>
+    <div style="font-size:12px;color:var(--gold)">SOUND ON</div>
+  </div>
 </div>
 
-<div class="tabs">
-  <div class="tab active" id="btn-signal" onclick="switchTab('signal')">◈ シグナル</div>
-  <div class="tab" id="btn-guide" onclick="switchTab('guide')">⚙ MT5 導入</div>
+<div class="signal-wrap">
+  <div id="sigCircle" class="sig-circle">
+    <div id="sigTxt" style="font-weight:900;font-size:18px;">WAIT</div>
+    <div id="sigArrow" style="font-size:24px">→</div>
+  </div>
+  <div class="sig-rows">
+    <div class="srow"><span class="slbl">ENTRY</span><span class="sval" id="sEntry" style="color:var(--gold)">----.--</span></div>
+    <div class="srow"><span class="slbl">TAKE PROFIT</span><span class="sval" style="color:var(--buy)" id="sTP">----.--</span></div>
+    <div class="srow"><span class="slbl">STOP LOSS</span><span class="sval" style="color:var(--sell)" id="sSL">----.--</span></div>
+  </div>
 </div>
 
-<div id="tab-signal">
-    <div class="price-strip">
-      <div class="pcard">
-        <div class="plabel">API FETCH PRICE (XAU)</div>
-        <div class="pval" id="price">----.--</div>
-        <div class="pchg" id="pchg">CONNECTING...</div>
-      </div>
-      <div class="pcard">
-        <div class="plabel">SERVER TIME</div>
-        <div class="pval sm" id="clock">00:00:00</div>
-        <div class="pchg" style="color:var(--dim)">UTC+2</div>
-      </div>
-      <div class="pcard">
-        <div class="plabel">ATR (H1)</div>
-        <div class="pval sm">18.42</div>
-        <div class="pchg" style="color:var(--gold-dark)">VOLATILITY</div>
-      </div>
-      <div class="pcard">
-        <div class="plabel">SESSION</div>
-        <div class="pval sm" id="session">LONDON</div>
-        <div class="pchg" style="color:var(--dim)">MARKET</div>
-      </div>
-    </div>
-
-    <div class="signal-wrap">
-      <div>
-        <div class="sig-circle buy" id="sigCircle">
-          <div class="sig-txt" id="sigTxt">BUY</div>
-          <div style="font-size:24px">↑</div>
-        </div>
-        <div style="text-align:center; margin-top:10px;">
-            <div style="font-size:9px; color:var(--dim)">CONFIDENCE</div>
-            <div style="color:var(--gold); font-size:14px; font-weight:bold" id="confPct">85%</div>
-        </div>
-      </div>
-      <div class="sig-rows">
-        <div class="srow"><span class="slbl">ENTRY</span><span class="sval tv-entry" id="sEntry">----.--</span></div>
-        <div class="srow"><span class="slbl">TAKE PROFIT</span><span class="sval" style="color:var(--buy)" id="sTP">----.--</span></div>
-        <div class="srow"><span class="slbl">STOP LOSS</span><span class="sval" style="color:var(--sell)" id="sSL">----.--</span></div>
-        <div class="srow"><span class="slbl">R:R RATIO</span><span class="sval">1 : 2.0</span></div>
-        <div class="srow"><span class="slbl">LOT (¥100k)</span><span class="sval" style="color:var(--gold)">0.05 lot</span></div>
-      </div>
-    </div>
-
-    <div class="ind-grid">
-      <div class="icard bull"><div class="iname">RSI (14)</div><div class="ival">58.4</div></div>
-      <div class="icard bull"><div class="iname">MACD</div><div class="ival">BULLISH</div></div>
-      <div class="icard bear"><div class="iname">STOCH</div><div class="ival">OVERBOUGHT</div></div>
-    </div>
-
-    <div class="btn-row">
-      <button class="btn btn-buy" onclick="force('buy')">FORCED BUY</button>
-      <button class="btn btn-sell" onclick="force('sell')">FORCED SELL</button>
-      <button class="btn btn-ref" onclick="fetchGoldPrice()">⟳</button>
-    </div>
+<div class="btn-row">
+  <button class="btn btn-buy" onclick="force('buy')">ENTRY BUY</button>
+  <button class="btn btn-sell" onclick="force('sell')">ENTRY SELL</button>
 </div>
-
-<div id="tab-guide" class="guide-wrap">
-    <div style="color:var(--gold); margin-bottom:20px;">▸ XM MT5 インストール手順</div>
-    <p style="font-size:12px; line-height:2;">1. GoldSignalPro.mq5 をダウンロード<br>
-    2. MT5 [ファイル] > [データフォルダを開く] > MQL5 > Indicators へ保存<br>
-    3. MT5を再起動、またはナビゲーターで右クリック[更新]<br>
-    4. XAUUSD(ゴールド)チャートにドラッグ＆ドロップ</p>
-</div>
-
-<footer>
-  GOLD SIGNAL PRO v3.0 · DATA BY BINANCE API
-</footer>
-
+<div style="text-align:center;font-size:10px;color:var(--dim);">※ボタン操作時に通知音が鳴ります</div>
 </div>
 
 <script>
-let currentPrice = 0;
-let signalDir = 'buy';
+let currentLivePrice = 0;
 
-// ===== Binance API から金(PAXG)の価格を取得 =====
-async function fetchGoldPrice(){
-  const priceEl = document.getElementById('price');
-  const entryEl = document.getElementById('sEntry');
-  const tpEl = document.getElementById('sTP');
-  const slEl = document.getElementById('sSL');
-  
-  try {
-    // Binance API (PAXGUSDT はゴールド価格に連動)
-    const response = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=PAXGUSDT');
-    if(response.ok){
-      const data = await response.json();
-      const price = parseFloat(data.price);
-      currentPrice = price;
-      
-      // UI更新
-      priceEl.textContent = price.toLocaleString(undefined, {minimumFractionDigits: 2});
-      entryEl.textContent = price.toFixed(2);
-      
-      // シグナル計算 (簡易版)
-      const offset = 15.0;
-      if(signalDir === 'buy'){
-          tpEl.textContent = (price + offset).toFixed(2);
-          slEl.textContent = (price - offset/1.5).toFixed(2);
-      } else {
-          tpEl.textContent = (price - offset).toFixed(2);
-          slEl.textContent = (price + offset/1.5).toFixed(2);
-      }
+// 通知音の設定
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playSound(type) {
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
 
-      document.getElementById('pchg').textContent = "● API CONNECTED";
-      document.getElementById('pchg').style.color = "#00e5a0";
-    }
-  } catch(e) {
-    console.error("Fetch Error:", e);
-    document.getElementById('pchg').textContent = "CONNECTION ERROR";
-    document.getElementById('pchg').style.color = "#ff3860";
+  if (type === 'buy') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, audioCtx.currentTime); // 高い音
+    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.2);
+  } else if (type === 'sell') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(440, audioCtx.currentTime); // 低い音
+    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.2);
   }
 }
 
+async function getPrice(){
+  try {
+    const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=PAXGUSDT');
+    const data = await res.json();
+    currentLivePrice = parseFloat(data.price);
+    document.getElementById('livePrice').textContent = currentLivePrice.toLocaleString(undefined, {minimumFractionDigits: 2});
+  } catch(e) {}
+}
+
 function force(dir){
-    signalDir = dir;
-    const circle = document.getElementById('sigCircle');
-    const txt = document.getElementById('sigTxt');
-    circle.className = 'sig-circle ' + dir;
-    txt.textContent = dir.toUpperCase();
-    fetchGoldPrice();
+  // ユーザー操作時にAudioContextを有効化
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  
+  if(currentLivePrice === 0) return;
+  const entry = currentLivePrice;
+  const offset = 15.0;
+
+  playSound(dir); // 音を鳴らす
+
+  document.getElementById('sEntry').textContent = entry.toFixed(2);
+  const circle = document.getElementById('sigCircle');
+  const txt = document.getElementById('sigTxt');
+  const arrow = document.getElementById('sigArrow');
+
+  if(dir === 'buy'){
+    circle.className = 'sig-circle buy';
+    txt.textContent = 'BUY'; arrow.textContent = '↑';
+    document.getElementById('sTP').textContent = (entry + offset).toFixed(2);
+    document.getElementById('sSL').textContent = (entry - 10.0).toFixed(2);
+  } else {
+    circle.className = 'sig-circle sell';
+    txt.textContent = 'SELL'; arrow.textContent = '↓';
+    document.getElementById('sTP').textContent = (entry - offset).toFixed(2);
+    document.getElementById('sSL').textContent = (entry + 10.0).toFixed(2);
+  }
 }
 
-function switchTab(name){
-    document.getElementById('tab-signal').style.display = (name === 'signal' ? 'block' : 'none');
-    document.getElementById('tab-guide').style.display = (name === 'guide' ? 'block' : 'none');
-    document.getElementById('btn-signal').className = 'tab' + (name === 'signal' ? ' active' : '');
-    document.getElementById('btn-guide').className = 'tab' + (name === 'guide' ? ' active' : '');
-}
-
-function updateClock(){
-    const now = new Date();
-    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-    const serverTime = new Date(utc + (3600000 * 2)); // UTC+2
-    document.getElementById('clock').textContent = serverTime.toTimeString().split(' ')[0];
-}
-
-// 初期化
-setInterval(fetchGoldPrice, 5000); // 5秒ごとに価格更新
-setInterval(updateClock, 1000);
-fetchGoldPrice();
+setInterval(getPrice, 5000);
+getPrice();
 </script>
 </body>
 </html>
