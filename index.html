@@ -4,92 +4,97 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gold Signal Pro</title>
-
 <style>
-body{background:#04080d;color:#c8e4ff;font-family:monospace;text-align:center}
-.box{border:1px solid gold;margin:15px;padding:15px;border-radius:10px}
-.buy{color:#00e5a0}
-.sell{color:#ff3860}
-.wait{color:#7aabcc}
+  body{background:#04080d;color:#c8e4ff;font-family:sans-serif;text-align:center;margin:0;padding:20px}
+  .box{border:1px solid #d4af37;margin:10px auto;padding:15px;border-radius:10px;max-width:400px;background:#0a121a}
+  .label{font-size:0.8rem;color:#7aabcc;margin-bottom:5px}
+  .value{font-size:1.8rem;font-weight:bold;font-family:monospace}
+  .buy{color:#00e5a0;text-shadow:0 0 10px #00e5a066}
+  .sell{color:#ff3860;text-shadow:0 0 10px #ff386066}
+  .wait{color:#7aabcc}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:430px;margin:0 auto}
+  input{background:#1a2634;border:1px solid #d4af37;color:#fff;padding:10px;border-radius:5px;width:80%;margin-bottom:10px}
+  button{background:#d4af37;color:#000;border:none;padding:10px 20px;border-radius:5px;font-weight:bold;cursor:pointer}
+  #settings{margin-top:30px;border-top:1px dashed #333;padding-top:20px}
 </style>
 </head>
-
 <body>
 
-<h2>GOLD SIGNAL PRO</h2>
+<h2 style="color:#d4af37;letter-spacing:2px">GOLD SIGNAL PRO</h2>
 
 <div class="box">
-  <div>現在価格</div>
-  <h1 id="price">--</h1>
+  <div class="label">現在価格 (XAU/USD)</div>
+  <div id="price" class="value">--</div>
 </div>
 
 <div class="box">
-  <div>トレンド</div>
-  <h2 id="trend">--</h2>
+  <div class="label">トレンド判定</div>
+  <div id="trend" class="value">--</div>
 </div>
 
 <div class="box">
-  <div>エントリー</div>
-  <h1 id="signal">--</h1>
+  <div class="label">シグナル</div>
+  <div id="signal" class="value">WAIT</div>
 </div>
 
-<div class="box">
-  <div>ENTRY</div><div id="entry">--</div>
-  <div>TP</div><div id="tp">--</div>
-  <div>SL</div><div id="sl">--</div>
+<div class="grid">
+  <div class="box" style="margin:0"><div class="label">利確(TP)</div><div id="tp" class="value" style="font-size:1.2rem">--</div></div>
+  <div class="box" style="margin:0"><div class="label">損切(SL)</div><div id="sl" class="value" style="font-size:1.2rem">--</div></div>
+</div>
+
+<div id="settings">
+  <div class="label">API Key 設定 (Twelve Data)</div>
+  <input type="password" id="apiKeyInput" placeholder="APIキーを入力">
+  <button onclick="saveApiKey()">キーを保存して開始</button>
+  <p style="font-size:0.7rem;color:gray">※キーはブラウザに安全に保存されます</p>
 </div>
 
 <script>
-
-// 🔑 ここにAPIキー入れる
-const API_KEY = "ここにあなたのAPIキー";
-
 let prices = [];
+let API_KEY = localStorage.getItem("gold_api_key") || "";
 
-// ======================
-// ローソク足取得
-// ======================
+if(API_KEY) {
+    document.getElementById("apiKeyInput").value = API_KEY;
+    startApp();
+}
+
+function saveApiKey() {
+    const val = document.getElementById("apiKeyInput").value.trim();
+    if(val) {
+        localStorage.setItem("gold_api_key", val);
+        API_KEY = val;
+        alert("保存しました！再読み込みします。");
+        location.reload();
+    }
+}
+
 async function fetchCandle(){
+  if(!API_KEY) return;
   try{
     let url = `https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=5min&outputsize=100&apikey=${API_KEY}`;
     let r = await fetch(url);
     let d = await r.json();
-
-    if(!d.values) return;
-
-    // 新しい順 → 古い順を反転
+    if(!d.values) {
+        console.error("APIエラー: キーが正しいか確認してください");
+        return;
+    }
     prices = d.values.map(c => parseFloat(c.close)).reverse();
-
-    document.getElementById("price").innerText =
-      prices[prices.length-1].toFixed(2);
-
+    document.getElementById("price").innerText = prices[prices.length-1].toFixed(2);
     calculate();
-
-  }catch(e){
-    console.log("API error");
-  }
+  }catch(e){ console.log("通信エラー"); }
 }
 
-// ======================
-// EMA
-// ======================
 function ema(period){
   let k = 2/(period+1);
   let e = prices[0];
-  for(let i=1;i<prices.length;i++){
-    e = prices[i]*k + e*(1-k);
-  }
+  for(let i=1;i<prices.length;i++){ e = prices[i]*k + e*(1-k); }
   return e;
 }
 
-// ======================
-// RSI
-// ======================
 function rsi(){
   if(prices.length < 15) return 50;
-
   let g=0,l=0;
-  for(let i=1;i<15;i++){
+  for(let i=prices.length-14;i<prices.length;i++){
     let d = prices[i]-prices[i-1];
     if(d>0) g+=d; else l+=Math.abs(d);
   }
@@ -97,55 +102,36 @@ function rsi(){
   return 100-(100/(1+rs));
 }
 
-// ======================
-// メインロジック
-// ======================
 function calculate(){
-
   let e20 = ema(20);
   let e50 = ema(50);
   let r = rsi();
   let price = prices[prices.length-1];
 
-  // トレンド
   let trend = "レンジ";
   if(e20 > e50) trend = "上昇トレンド";
   if(e20 < e50) trend = "下降トレンド";
-
   document.getElementById("trend").innerText = trend;
 
-  // エントリー判定
   let signal = "WAIT";
-
-  // 押し目買い
-  if(trend === "上昇トレンド" && price < e20 && r > 40){
-    signal = "BUY";
-  }
-
-  // 戻り売り
-  if(trend === "下降トレンド" && price > e20 && r < 60){
-    signal = "SELL";
-  }
+  if(trend === "上昇トレンド" && price < e20 && r > 40) signal = "BUY";
+  if(trend === "下降トレンド" && price > e20 && r < 60) signal = "SELL";
 
   let sigEl = document.getElementById("signal");
   sigEl.innerText = signal;
-  sigEl.className = signal.toLowerCase();
+  sigEl.className = "value " + signal.toLowerCase();
 
-  // TP / SL
-  let atr = 15;
-  let tp = signal==="BUY" ? price+30 : price-30;
-  let sl = signal==="BUY" ? price-15 : price+15;
+  let tp = signal==="BUY" ? price+3.0 : (signal==="SELL" ? price-3.0 : 0);
+  let sl = signal==="BUY" ? price-1.5 : (signal==="SELL" ? price+1.5 : 0);
 
-  document.getElementById("entry").innerText = price.toFixed(2);
-  document.getElementById("tp").innerText = tp.toFixed(2);
-  document.getElementById("sl").innerText = sl.toFixed(2);
+  document.getElementById("tp").innerText = tp ? tp.toFixed(2) : "--";
+  document.getElementById("sl").innerText = sl ? sl.toFixed(2) : "--";
 }
 
-// ======================
-fetchCandle();
-setInterval(fetchCandle, 15000);
-
+function startApp() {
+    fetchCandle();
+    setInterval(fetchCandle, 15000);
+}
 </script>
-
 </body>
 </html>
