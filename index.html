@@ -3,135 +3,245 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gold Signal Pro</title>
+<title>GOLD SIGNAL PRO</title>
+
 <style>
-  body{background:#04080d;color:#c8e4ff;font-family:sans-serif;text-align:center;margin:0;padding:20px}
-  .box{border:1px solid #d4af37;margin:10px auto;padding:15px;border-radius:10px;max-width:400px;background:#0a121a}
-  .label{font-size:0.8rem;color:#7aabcc;margin-bottom:5px}
-  .value{font-size:1.8rem;font-weight:bold;font-family:monospace}
-  .buy{color:#00e5a0;text-shadow:0 0 10px #00e5a066}
-  .sell{color:#ff3860;text-shadow:0 0 10px #ff386066}
-  .wait{color:#7aabcc}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:430px;margin:0 auto}
-  input{background:#1a2634;border:1px solid #d4af37;color:#fff;padding:10px;border-radius:5px;width:80%;margin-bottom:10px}
-  button{background:#d4af37;color:#000;border:none;padding:10px 20px;border-radius:5px;font-weight:bold;cursor:pointer}
-  #settings{margin-top:30px;border-top:1px dashed #333;padding-top:20px}
+body{
+  background:#0b0f14;
+  color:#fff;
+  font-family:sans-serif;
+  text-align:center;
+  padding:20px;
+}
+.box{
+  border:1px solid gold;
+  border-radius:12px;
+  padding:20px;
+  margin:15px 0;
+}
+.price{font-size:32px}
+.up{color:#00e5a0}
+.down{color:#ff3860}
+button{
+  padding:12px 20px;
+  background:gold;
+  border:none;
+  border-radius:8px;
+  font-weight:bold;
+}
+input{
+  padding:10px;
+  margin:5px;
+  width:80%;
+  border-radius:6px;
+  border:none;
+}
 </style>
 </head>
+
 <body>
 
-<h2 style="color:#d4af37;letter-spacing:2px">GOLD SIGNAL PRO</h2>
+<h1>GOLD SIGNAL PRO</h1>
 
 <div class="box">
-  <div class="label">現在価格 (XAU/USD)</div>
-  <div id="price" class="value">--</div>
-</div>
-
-<div class="box">
-  <div class="label">トレンド判定</div>
-  <div id="trend" class="value">--</div>
+  <div>現在価格</div>
+  <div id="price" class="price">--</div>
 </div>
 
 <div class="box">
-  <div class="label">シグナル</div>
-  <div id="signal" class="value">WAIT</div>
+  <div>トレンド</div>
+  <div id="trend">--</div>
 </div>
 
-<div class="grid">
-  <div class="box" style="margin:0"><div class="label">利確(TP)</div><div id="tp" class="value" style="font-size:1.2rem">--</div></div>
-  <div class="box" style="margin:0"><div class="label">損切(SL)</div><div id="sl" class="value" style="font-size:1.2rem">--</div></div>
+<div class="box">
+  <div>シグナル</div>
+  <div id="signal">--</div>
 </div>
 
-<div id="settings">
-  <div class="label">API Key 設定 (Twelve Data)</div>
-  <input type="password" id="apiKeyInput" placeholder="APIキーを入力">
-  <button onclick="saveApiKey()">キーを保存して開始</button>
-  <p style="font-size:0.7rem;color:gray">※キーはブラウザに安全に保存されます</p>
+<div class="box">
+  <div id="tp">TP: --</div>
+  <div id="sl">SL: --</div>
+  <div id="lot">Lot: --</div>
+</div>
+
+<div class="box">
+  <div>時間足トレンド</div>
+  <div id="summary"></div>
+  <div id="tf"></div>
+</div>
+
+<div class="box">
+  <input id="key" placeholder="APIキー">
+  <input id="balance" placeholder="口座残高 (例:100000)">
+  <button onclick="start()">開始</button>
 </div>
 
 <script>
-let prices = [];
-let API_KEY = localStorage.getItem("gold_api_key") || "";
 
-if(API_KEY) {
-    document.getElementById("apiKeyInput").value = API_KEY;
-    startApp();
+let API_KEY="";
+let BALANCE=100000;
+
+// =====================
+// スタート
+// =====================
+function start(){
+  API_KEY = document.getElementById("key").value;
+  BALANCE = parseFloat(document.getElementById("balance").value) || 100000;
+
+  if(!API_KEY){
+    alert("APIキー入れて");
+    return;
+  }
+
+  fetchData();
+  setInterval(fetchData,60000);
 }
 
-function saveApiKey() {
-    const val = document.getElementById("apiKeyInput").value.trim();
-    if(val) {
-        localStorage.setItem("gold_api_key", val);
-        API_KEY = val;
-        alert("保存しました！再読み込みします。");
-        location.reload();
-    }
+// =====================
+// データ取得
+// =====================
+async function fetchData(){
+
+  let url = `https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=5min&outputsize=50&apikey=${API_KEY}`;
+
+  let r = await fetch(url);
+  let d = await r.json();
+
+  if(!d.values) return;
+
+  let candles = d.values.reverse();
+  let closes = candles.map(v=>parseFloat(v.close));
+
+  let price = closes[closes.length-1];
+  document.getElementById("price").textContent = price.toFixed(2);
+
+  let e20 = ema(closes,20);
+  let e50 = ema(closes,50);
+
+  let trend = e20>e50?"上昇":"下降";
+  let signal = e20>e50?"BUY":"SELL";
+
+  document.getElementById("trend").textContent = trend;
+  document.getElementById("signal").textContent = signal;
+
+  // ===== ATR =====
+  let atr = calcATR(candles,14);
+
+  // ===== TP / SL =====
+  let tp = signal=="BUY"?price + atr*2 : price - atr*2;
+  let sl = signal=="BUY"?price - atr   : price + atr;
+
+  // ===== ロット計算（1%リスク）=====
+  let risk = BALANCE * 0.01;
+  let lot = risk / atr;
+
+  document.getElementById("tp").textContent = "TP: "+tp.toFixed(2);
+  document.getElementById("sl").textContent = "SL: "+sl.toFixed(2);
+  document.getElementById("lot").textContent = "Lot: "+lot.toFixed(2);
+
+  renderTF();
 }
 
-async function fetchCandle(){
-  if(!API_KEY) return;
-  try{
-    let url = `https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=5min&outputsize=100&apikey=${API_KEY}`;
-    let r = await fetch(url);
-    let d = await r.json();
-    if(!d.values) {
-        console.error("APIエラー: キーが正しいか確認してください");
-        return;
-    }
-    prices = d.values.map(c => parseFloat(c.close)).reverse();
-    document.getElementById("price").innerText = prices[prices.length-1].toFixed(2);
-    calculate();
-  }catch(e){ console.log("通信エラー"); }
-}
-
-function ema(period){
-  let k = 2/(period+1);
-  let e = prices[0];
-  for(let i=1;i<prices.length;i++){ e = prices[i]*k + e*(1-k); }
+// =====================
+// EMA
+// =====================
+function ema(arr,p){
+  let k=2/(p+1);
+  let e=arr[0];
+  for(let i=1;i<arr.length;i++){
+    e=arr[i]*k+e*(1-k);
+  }
   return e;
 }
 
-function rsi(){
-  if(prices.length < 15) return 50;
-  let g=0,l=0;
-  for(let i=prices.length-14;i<prices.length;i++){
-    let d = prices[i]-prices[i-1];
-    if(d>0) g+=d; else l+=Math.abs(d);
+// =====================
+// ATR
+// =====================
+function calcATR(data,period=14){
+
+  if(data.length < period+1) return 10;
+
+  let trs = [];
+
+  for(let i=1;i<data.length;i++){
+    let high = parseFloat(data[i].high);
+    let low  = parseFloat(data[i].low);
+    let prevClose = parseFloat(data[i-1].close);
+
+    let tr = Math.max(
+      high - low,
+      Math.abs(high - prevClose),
+      Math.abs(low - prevClose)
+    );
+
+    trs.push(tr);
   }
-  let rs = g/(l||1);
-  return 100-(100/(1+rs));
+
+  let atr = trs.slice(-period).reduce((a,b)=>a+b,0)/period;
+  return atr;
 }
 
-function calculate(){
-  let e20 = ema(20);
-  let e50 = ema(50);
-  let r = rsi();
-  let price = prices[prices.length-1];
+// =====================
+// 時間足
+// =====================
+async function getTF(interval){
 
-  let trend = "レンジ";
-  if(e20 > e50) trend = "上昇トレンド";
-  if(e20 < e50) trend = "下降トレンド";
-  document.getElementById("trend").innerText = trend;
+  let url = `https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=${interval}&outputsize=50&apikey=${API_KEY}`;
 
-  let signal = "WAIT";
-  if(trend === "上昇トレンド" && price < e20 && r > 40) signal = "BUY";
-  if(trend === "下降トレンド" && price > e20 && r < 60) signal = "SELL";
+  let r = await fetch(url);
+  let d = await r.json();
 
-  let sigEl = document.getElementById("signal");
-  sigEl.innerText = signal;
-  sigEl.className = "value " + signal.toLowerCase();
+  if(!d.values) return "wait";
 
-  let tp = signal==="BUY" ? price+3.0 : (signal==="SELL" ? price-3.0 : 0);
-  let sl = signal==="BUY" ? price-1.5 : (signal==="SELL" ? price+1.5 : 0);
+  let arr = d.values.map(v=>parseFloat(v.close)).reverse();
 
-  document.getElementById("tp").innerText = tp ? tp.toFixed(2) : "--";
-  document.getElementById("sl").innerText = sl ? sl.toFixed(2) : "--";
+  let e20 = ema(arr,20);
+  let e50 = ema(arr,50);
+
+  if(e20>e50) return "up";
+  if(e20<e50) return "down";
+  return "wait";
 }
 
-function startApp() {
-    fetchCandle();
-    setInterval(fetchCandle, 15000);
+// =====================
+// 時間足表示
+// =====================
+async function renderTF(){
+
+  let list = [
+    {n:"5分",v:"5min"},
+    {n:"15分",v:"15min"},
+    {n:"30分",v:"30min"},
+    {n:"1時間",v:"1h"},
+    {n:"4時間",v:"4h"}
+  ];
+
+  let res=[];
+
+  for(let t of list){
+    let d = await getTF(t.v);
+    res.push({n:t.n,d});
+  }
+
+  let shortUp = res.slice(0,3).filter(r=>r.d=="up").length;
+  let longDown = res.slice(3).filter(r=>r.d=="down").length;
+
+  let summary = (shortUp>=2?"短期↑":"短期↓")+" / "+(longDown>=1?"長期↓":"長期↑");
+
+  document.getElementById("summary").innerHTML = summary;
+
+  let html="";
+
+  res.forEach(r=>{
+    let a = r.d=="up"?"↑":r.d=="down"?"↓":"-";
+    let c = r.d=="up"?"up":"down";
+    html+=`<div class="${c}">${r.n} ${a}</div>`;
+  });
+
+  document.getElementById("tf").innerHTML = html;
 }
+
 </script>
+
 </body>
 </html>
