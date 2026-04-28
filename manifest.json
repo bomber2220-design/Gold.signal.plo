@@ -1,0 +1,8 @@
+{
+  "name": "Gold Signal Pro",
+  "short_name": "GoldSignal",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#04080d",
+  "theme_color": "#FFD700"
+}
