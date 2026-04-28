@@ -1,164 +1,46 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gold Signal Pro</title>
-
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#FFD700">
-
-<style>
-body{
-  background:#04080d;
-  color:#c8e4ff;
-  font-family:monospace;
-  text-align:center;
-  margin:0;
-}
-h2{color:#FFD700}
-.box{
-  border:1px solid #FFD700;
-  padding:20px;
-  margin:15px;
-  border-radius:10px;
-}
-.buy{color:#00e5a0}
-.sell{color:#ff3860}
-.wait{color:#7aabcc}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold Signal Pro</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body { background-color: #04080d; color: #FFD700; font-family: sans-serif; text-align: center; }
+        .card { border: 1px solid #FFD700; border-radius: 10px; margin: 20px; padding: 20px; }
+        h1 { color: #FFD700; }
+        .value { font-size: 2em; font-weight: bold; margin: 10px 0; }
+    </style>
 </head>
-
 <body>
+    <h1>GOLD SIGNAL PRO</h1>
+    
+    <div class="card">
+        <div>価格</div>
+        <div id="price" class="value">--</div>
+    </div>
 
-<h2>GOLD SIGNAL PRO</h2>
+    <div class="card">
+        <div>シグナル</div>
+        <div id="signal" class="value">--</div>
+        <div id="time">--</div>
+    </div>
 
-<div class="box">
-  <div>価格</div>
-  <h1 id="price">--</h1>
-</div>
+    <div class="card">
+        <div>ENTRY</div>
+        <div id="entry" class="value">--</div>
+        <div>TP: <span id="tp">--</span></div>
+        <div>SL: <span id="sl">--</span></div>
+    </div>
 
-<div class="box">
-  <div>シグナル</div>
-  <h1 id="signal">--</h1>
-  <div id="trend">--</div>
-</div>
+    <script>
+        // 3つ目のファイル(sw.js)を登録する魔法
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
 
-<div class="box">
-  <div>ENTRY</div><div id="entry">--</div>
-  <div>TP</div><div id="tp">--</div>
-  <div>SL</div><div id="sl">--</div>
-</div>
-
-<script>
-let price = 0;
-let history = [];
-
-// ======================
-// 価格取得
-// ======================
-async function fetchPrice(){
-  try{
-    let r = await fetch("https://api.metals.live/v1/spot/gold");
-    let d = await r.json();
-    let p = Array.isArray(d) ? d[0].gold : d.gold;
-
-    if(p && p > 1000){
-      updatePrice(parseFloat(p.toFixed(2)));
-    }
-  }catch(e){
-    console.log("APIエラー");
-  }
-}
-
-// ======================
-// 更新
-// ======================
-function updatePrice(p){
-  price = p;
-  document.getElementById("price").innerText = p;
-
-  history.push(p);
-  if(history.length > 100) history.shift();
-
-  calculate();
-}
-
-// ======================
-// RSI
-// ======================
-function calcRSI(){
-  if(history.length < 15) return 50;
-
-  let gains=0, losses=0;
-  for(let i=1;i<15;i++){
-    let d = history[i] - history[i-1];
-    if(d>0) gains+=d;
-    else losses+=Math.abs(d);
-  }
-
-  let rs = gains / (losses || 1);
-  return 100 - (100/(1+rs));
-}
-
-// ======================
-// EMA
-// ======================
-function calcEMA(period){
-  if(history.length === 0) return 0;
-  let k = 2/(period+1);
-  let ema = history[0];
-  for(let i=1;i<history.length;i++){
-    ema = history[i]*k + ema*(1-k);
-  }
-  return ema;
-}
-
-// ======================
-// メインロジック
-// ======================
-function calculate(){
-  let rsi = calcRSI();
-  let ema20 = calcEMA(20);
-  let ema50 = calcEMA(50);
-
-  let signal = "WAIT";
-
-  if(rsi > 55 && ema20 > ema50){
-    signal = "BUY";
-  }
-  else if(rsi < 45 && ema20 < ema50){
-    signal = "SELL";
-  }
-
-  let sigEl = document.getElementById("signal");
-  sigEl.innerText = signal;
-  sigEl.className = signal.toLowerCase();
-
-  let trend = ema20 > ema50 ? "UP TREND" : "DOWN TREND";
-  document.getElementById("trend").innerText = trend;
-
-  // TP / SL
-  let atr = 15;
-  let tp = signal==="BUY" ? price + atr*2 : price - atr*2;
-  let sl = signal==="BUY" ? price - atr : price + atr;
-
-  document.getElementById("entry").innerText = price.toFixed(2);
-  document.getElementById("tp").innerText = tp.toFixed(2);
-  document.getElementById("sl").innerText = sl.toFixed(2);
-}
-
-// ======================
-setInterval(fetchPrice, 5000);
-fetchPrice();
-
-// ======================
-// PWA
-// ======================
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js');
-}
-</script>
-
+        // ここに価格データを取得する処理を後で追加できます
+        console.log("アプリ起動準備完了");
+    </script>
 </body>
 </html>
